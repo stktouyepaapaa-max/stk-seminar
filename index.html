@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pendaftaran Seminar STK Touye Paapaa</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f7fb;
+  color:#1f2937;
+}
+header{
+  background:#0b5ed7;
+  color:white;
+  text-align:center;
+  padding:35px 20px;
+}
+.container{
+  max-width:800px;
+  margin:30px auto;
+  padding:0 20px;
+}
+.card{
+  background:white;
+  padding:25px;
+  margin-bottom:20px;
+  border-radius:15px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+h2{color:#0b5ed7}
+.info{
+  background:#eef6ff;
+  padding:15px;
+  border-radius:10px;
+  margin:15px 0;
+}
+label{
+  display:block;
+  font-weight:bold;
+  margin-top:15px;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border:1px solid #ccc;
+  border-radius:7px;
+  box-sizing:border-box;
+}
+button{
+  width:100%;
+  padding:14px;
+  margin-top:20px;
+  border:0;
+  border-radius:7px;
+  background:#0b5ed7;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+#hasil{
+  display:none;
+  text-align:center;
+  background:#f0fdf4;
+  border:2px solid #16a34a;
+}
+.nomor{
+  font-size:28px;
+  font-weight:bold;
+  color:#15803d;
+  margin:15px;
+}
+#error{
+  color:#b91c1c;
+  margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>STK TOUYE PAPAA</h1>
+<p>Pendaftaran & Presensi Seminar</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Seminar AI dalam Pendidikan</h2>
+
+<div class="info">
+📅 <b>15 Oktober 2026</b><br>
+🕘 09.00 WIT<br>
+📍 Aula STK Touye Paapaa
+</div>
+
+<p>
+Seminar tentang pemanfaatan Artificial Intelligence
+dalam dunia pendidikan.
+</p>
+</div>
+
+<div class="card" id="formCard">
+
+<h2>Formulir Pendaftaran</h2>
+
+<form id="form">
+
+<label>Nama Lengkap *</label>
+<input id="nama" required>
+
+<label>NIP / NIDN / NIK</label>
+<input id="identitas">
+
+<label>Instansi / Sekolah *</label>
+<input id="instansi" required>
+
+<label>Jabatan</label>
+<input id="jabatan">
+
+<label>Nomor WhatsApp *</label>
+<input id="wa" required>
+
+<label>Email *</label>
+<input type="email" id="email" required>
+
+<button type="submit" id="btn">
+DAFTAR SEKARANG
+</button>
+
+<div id="error"></div>
+
+</form>
+</div>
+
+<div class="card" id="hasil">
+
+<h2>✓ Pendaftaran Berhasil</h2>
+
+<p>Nomor peserta Anda:</p>
+
+<div class="nomor" id="nomor"></div>
+
+<p>
+Simpan nomor peserta ini untuk presensi seminar.
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbx2bss58f7H5H-unGRwd5Sfnl7KeBF8zcpeUqh1NKxGqThABj4322DZKxpZ3OXxa44U/exec";
+
+document.getElementById("form").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const btn=document.getElementById("btn");
+const error=document.getElementById("error");
+
+btn.disabled=true;
+btn.textContent="Memproses...";
+
+const data={
+nama:document.getElementById("nama").value,
+identitas:document.getElementById("identitas").value,
+instansi:document.getElementById("instansi").value,
+jabatan:document.getElementById("jabatan").value,
+wa:document.getElementById("wa").value,
+email:document.getElementById("email").value,
+seminar_id:"SEM001"
+};
+
+try{
+
+const response=await fetch(API_URL,{
+method:"POST",
+headers:{
+"Content-Type":"text/plain;charset=utf-8"
+},
+body:JSON.stringify(data)
+});
+
+const result=await response.json();
+
+if(!result.success){
+throw new Error(result.message);
+}
+
+document.getElementById("formCard").style.display="none";
+
+document.getElementById("nomor").textContent=
+result.data.no_peserta;
+
+document.getElementById("hasil").style.display="block";
+
+window.scrollTo(0,0);
+
+}catch(err){
+
+error.textContent=
+"Pendaftaran gagal. Silakan coba lagi.";
+
+btn.disabled=false;
+btn.textContent="DAFTAR SEKARANG";
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
