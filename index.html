@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Pendaftaran Seminar STK Touye Paapaa</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0b5ed7, #0d8bf2);
+      color: white;
+      padding: 35px 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    .header p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .seminar-title {
+      color: #0b5ed7;
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    .info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .info-box {
+      background: #f0f6ff;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .info-box strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #0b5ed7;
+    }
+
+    h2 {
+      color: #0b5ed7;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #0b5ed7;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 14px;
+      background: #0b5ed7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #084298;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .hasil {
+      display: none;
+      text-align: center;
+      border: 2px solid #16a34a;
+      background: #f0fdf4;
+    }
+
+    .nomor-peserta {
+      font-size: 32px;
+      font-weight: bold;
+      color: #15803d;
+      margin: 20px 0;
+    }
+
+    .error {
+      display: none;
+      padding: 15px;
+      margin-top: 15px;
+      background: #fef2f2;
+      color: #b91c1c;
+      border-radius: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+      .info {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <h1>STK TOUYE PAPAA</h1>
+    <p>Pendaftaran & Presensi Seminar</p>
+    <p>Belajar • Berkembang • Berbagi</p>
+  </header>
+
+  <main class="container">
+
+    <!-- INFORMASI SEMINAR -->
+    <section class="card">
+
+      <h2 class="seminar-title">
+        Seminar AI dalam Pendidikan
+      </h2>
+
+      <p>
+        Seminar tentang pemanfaatan Artificial Intelligence
+        dalam dunia pendidikan.
+      </p>
+
+      <div class="info">
+
+        <div class="info-box">
+          <strong>📅 Tanggal</strong>
+          15 Oktober 2026
+        </div>
+
+        <div class="info-box">
+          <strong>🕘 Waktu</strong>
+          09.00 WIT
+        </div>
+
+        <div class="info-box">
+          <strong>📍 Lokasi</strong>
+          Aula STK Touye Paapaa
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- FORM PENDAFTARAN -->
+    <section class="card">
+
+      <h2>Formulir Pendaftaran</h2>
+
+      <p>
+        Silakan lengkapi data berikut dengan benar.
+      </p>
+
+      <form id="formPendaftaran">
+
+        <label for="nama">
+          Nama Lengkap *
+        </label>
+
+        <input
+          type="text"
+          id="nama"
+          name="nama"
+          placeholder="Masukkan nama lengkap"
+          required
+        >
+
+
+        <label for="identitas">
+          NIP / NIDN / NIK
+        </label>
+
+        <input
+          type="text"
+          id="identitas"
+          name="identitas"
+          placeholder="Masukkan nomor identitas"
+        >
+
+
+        <label for="instansi">
+          Instansi / Sekolah / Lembaga *
+        </label>
+
+        <input
+          type="text"
+          id="instansi"
+          name="instansi"
+          placeholder="Nama instansi"
+          required
+        >
+
+
+        <label for="jabatan">
+          Jabatan
+        </label>
+
+        <input
+          type="text"
+          id="jabatan"
+          name="jabatan"
+          placeholder="Contoh: Guru, Dosen, Mahasiswa"
+        >
+
+
+        <label for="wa">
+          Nomor WhatsApp *
+        </label>
+
+        <input
+          type="tel"
+          id="wa"
+          name="wa"
+          placeholder="08xxxxxxxxxx"
+          required
+        >
+
+
+        <label for="email">
+          Email *
+        </label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="nama@email.com"
+          required
+        >
+
+        <button type="submit" id="btnDaftar">
+          DAFTAR SEKARANG
+        </button>
+
+      </form>
+
+      <div id="errorBox" class="error"></div>
+
+    </section>
+
+
+    <!-- HASIL PENDAFTARAN -->
+    <section id="hasil" class="card hasil">
+
+      <h2>✓ Pendaftaran Berhasil</h2>
+
+      <p>
+        Terima kasih. Anda telah berhasil terdaftar
+        sebagai peserta seminar.
+      </p>
+
+      <p>Nomor Peserta Anda:</p>
+
+      <div id="nomorPeserta" class="nomor-peserta">
+      </div>
+
+      <p>
+        <strong>Simpan nomor peserta ini.</strong>
+      </p>
+
+      <p>
+        Nomor peserta akan digunakan untuk
+        presensi seminar.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <footer class="footer">
+
+    <div>
+      STK Touye Paapaa Deiyai
+    </div>
+
+    <div>
+      © 2026 STK Touye Paapaa
+    </div>
+
+  </footer>
+
+
+  <script>
+
+    // =====================================================
+    // URL GOOGLE APPS SCRIPT
+    // =====================================================
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbx2bss58f7H5H-unGRwd5Sfnl7KeBF8zcpeUqh1NKxGqThABj4322DZKxpZ3OXxa44U/exec";
+
+
+    // =====================================================
+    // FORM PENDAFTARAN
+    // =====================================================
+
+    const form =
+      document.getElementById("formPendaftaran");
+
+    const button =
+      document.getElementById("btnDaftar");
+
+    const errorBox =
+      document.getElementById("errorBox");
+
+    const hasil =
+      document.getElementById("hasil");
+
+    const nomorPeserta =
+      document.getElementById("nomorPeserta");
+
+
+    form.addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      errorBox.style.display = "none";
+
+      button.disabled = true;
+
+      button.textContent = "Memproses pendaftaran...";
+
+
+      const data = {
+
+        nama:
+          document.getElementById("nama").value.trim(),
+
+        identitas:
+          document.getElementById("identitas").value.trim(),
+
+        instansi:
+          document.getElementById("instansi").value.trim(),
+
+        jabatan:
+          document.getElementById("jabatan").value.trim(),
+
+        wa:
+          document.getElementById("wa").value.trim(),
+
+        email:
+          document.getElementById("email").value.trim(),
+
+        seminar_id:
+          "SEM001"
+
+      };
+
+
+      try {
+
+        const response = await fetch(
+          API_URL,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
+
+            body: JSON.stringify(data)
+          }
+        );
+
+
+        const result =
+          await response.json();
+
+
+        if (!result.success) {
+
+          throw new Error(
+            result.message ||
+            "Pendaftaran gagal."
+          );
+
+        }
+
+
+        // Tampilkan nomor peserta
+
+        nomorPeserta.textContent =
+          result.data.no_peserta;
+
+
+        hasil.style.display = "block";
+
+        form.style.display = "none";
+
+
+        window.scrollTo({
+          top: hasil.offsetTop - 20,
+          behavior: "smooth"
+        });
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        errorBox.textContent =
+          "Pendaftaran belum berhasil. " +
+          "Silakan coba lagi.";
+
+        errorBox.style.display = "block";
+
+        button.disabled = false;
+
+        button.textContent =
+          "DAFTAR SEKARANG";
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
