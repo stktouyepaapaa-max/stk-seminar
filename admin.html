@@ -269,7 +269,7 @@ td {
 
 
 /* =====================================================
-   KHUSUS CETAK
+   CETAK
 ===================================================== */
 
 @media print {
@@ -461,7 +461,7 @@ td {
     </div>
 
 
-    <!-- INFORMASI ADMIN + TOMBOL -->
+    <!-- INFORMASI ADMIN -->
 
     <div class="card">
 
@@ -620,9 +620,7 @@ td {
 
       <div class="table-wrapper">
 
-        <table
-          id="pesertaTablePrint"
-        >
+        <table id="pesertaTablePrint">
 
           <thead>
 
@@ -695,7 +693,7 @@ const API_URL =
 
 
 /* =====================================================
-   DATA PESERTA DI BROWSER
+   DATA PESERTA
 ===================================================== */
 
 let currentParticipants = [];
@@ -707,7 +705,6 @@ let currentParticipants = [];
 ===================================================== */
 
 async function loginAdmin() {
-
 
   const email =
     document
@@ -758,7 +755,6 @@ async function loginAdmin() {
 
 
   try {
-
 
     const response =
       await fetch(
@@ -832,7 +828,6 @@ async function loginAdmin() {
 
   } catch (error) {
 
-
     errorBox.textContent =
       error.message ||
       "Login gagal. Silakan coba lagi.";
@@ -843,7 +838,6 @@ async function loginAdmin() {
 
 
   } finally {
-
 
     button.disabled =
       false;
@@ -863,7 +857,6 @@ async function loginAdmin() {
 ===================================================== */
 
 function showDashboard() {
-
 
   document
     .getElementById("loginPage")
@@ -922,7 +915,6 @@ function showDashboard() {
 
 async function loadDashboard() {
 
-
   const token =
     localStorage.getItem(
       "stk_admin_token"
@@ -970,7 +962,6 @@ async function loadDashboard() {
 
   try {
 
-
     const response =
       await fetch(
         API_URL,
@@ -1005,7 +996,6 @@ async function loadDashboard() {
 
     if (!result.success) {
 
-
       if (
         result.message &&
         (
@@ -1018,14 +1008,11 @@ async function loadDashboard() {
         )
       ) {
 
-
         logoutLocal();
-
 
         alert(
           "Sesi admin telah berakhir. Silakan login kembali."
         );
-
 
         return;
 
@@ -1040,15 +1027,18 @@ async function loadDashboard() {
     }
 
 
-
-    /* Simpan data peserta */
+    /*
+     * Simpan data peserta
+     * untuk fitur CSV dan CETAK.
+     */
 
     currentParticipants =
       result.peserta || [];
 
 
-
-    /* Statistik */
+    /*
+     * Statistik
+     */
 
     document.getElementById(
       "totalPeserta"
@@ -1068,8 +1058,9 @@ async function loadDashboard() {
       result.rekap.total_belum_hadir;
 
 
-
-    /* Tabel peserta */
+    /*
+     * Tabel peserta
+     */
 
     const table =
       document.getElementById(
@@ -1086,7 +1077,6 @@ async function loadDashboard() {
       result.peserta.length === 0
     ) {
 
-
       table.innerHTML =
         `<tr>
           <td
@@ -1097,13 +1087,10 @@ async function loadDashboard() {
           </td>
         </tr>`;
 
-
     } else {
-
 
       result.peserta.forEach(
         function(peserta) {
-
 
           const row =
             document.createElement(
@@ -1185,7 +1172,6 @@ async function loadDashboard() {
             row
           );
 
-
         }
       );
 
@@ -1217,7 +1203,6 @@ async function loadDashboard() {
 
   } catch (error) {
 
-
     loading.style.display =
       "none";
 
@@ -1238,10 +1223,10 @@ async function loadDashboard() {
 
 /* =====================================================
    DOWNLOAD CSV
+   KHUSUS EXCEL INDONESIA
 ===================================================== */
 
 function downloadCSV() {
-
 
   if (
     !currentParticipants ||
@@ -1256,6 +1241,20 @@ function downloadCSV() {
 
   }
 
+
+  /*
+   * Excel dengan pengaturan regional
+   * Indonesia umumnya menggunakan
+   * titik koma sebagai pemisah data.
+   */
+
+  const delimiter =
+    ";";
+
+
+  /*
+   * Header CSV
+   */
 
   const headers = [
 
@@ -1272,6 +1271,10 @@ function downloadCSV() {
   ];
 
 
+  /*
+   * Data peserta
+   */
+
   const rows =
     currentParticipants.map(
       function(p) {
@@ -1284,7 +1287,8 @@ function downloadCSV() {
           p.jabatan || "",
           p.wa || "",
           p.email || "",
-          p.status_presensi || "BELUM HADIR",
+          p.status_presensi ||
+            "BELUM HADIR",
           p.tanggal_presensi || "",
           p.jam_presensi || ""
 
@@ -1294,19 +1298,53 @@ function downloadCSV() {
     );
 
 
+  /*
+   * Gabungkan header
+   */
+
   const csvRows = [];
 
 
   csvRows.push(
-    headers.map(csvEscape).join(",")
+
+    headers
+      .map(
+        function(value) {
+
+          return csvEscape(
+            value,
+            delimiter
+          );
+
+        }
+      )
+      .join(delimiter)
+
   );
 
+
+  /*
+   * Gabungkan data
+   */
 
   rows.forEach(
     function(row) {
 
       csvRows.push(
-        row.map(csvEscape).join(",")
+
+        row
+          .map(
+            function(value) {
+
+              return csvEscape(
+                value,
+                delimiter
+              );
+
+            }
+          )
+          .join(delimiter)
+
       );
 
     }
@@ -1314,14 +1352,19 @@ function downloadCSV() {
 
 
   /*
-   * BOM UTF-8 agar Excel membaca
-   * karakter Indonesia dengan benar.
+   * BOM UTF-8
+   * Agar Excel membaca karakter
+   * Indonesia dengan benar.
    */
 
   const csvContent =
     "\uFEFF" +
     csvRows.join("\r\n");
 
+
+  /*
+   * Buat file CSV
+   */
 
   const blob =
     new Blob(
@@ -1334,17 +1377,39 @@ function downloadCSV() {
 
 
   const url =
-    URL.createObjectURL(blob);
+    URL.createObjectURL(
+      blob
+    );
 
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
+
+
+  /*
+   * Tanggal file
+   */
+
+  const sekarang =
+    new Date();
+
+
+  const tahun =
+    sekarang.getFullYear();
+
+
+  const bulan =
+    String(
+      sekarang.getMonth() + 1
+    ).padStart(2, "0");
 
 
   const tanggal =
-    new Date()
-      .toISOString()
-      .slice(0,10);
+    String(
+      sekarang.getDate()
+    ).padStart(2, "0");
 
 
   link.href =
@@ -1353,6 +1418,10 @@ function downloadCSV() {
 
   link.download =
     "Daftar_Peserta_Seminar_STK_" +
+    tahun +
+    "-" +
+    bulan +
+    "-" +
     tanggal +
     ".csv";
 
@@ -1382,8 +1451,10 @@ function downloadCSV() {
    ESCAPE CSV
 ===================================================== */
 
-function csvEscape(value) {
-
+function csvEscape(
+  value,
+  delimiter
+) {
 
   let text =
     String(
@@ -1395,12 +1466,14 @@ function csvEscape(value) {
 
 
   /*
-   * Jika mengandung koma,
-   * tanda kutip, atau baris baru,
+   * Jika isi data mengandung
+   * delimiter, koma, kutip,
+   * atau baris baru,
    * bungkus dengan tanda kutip.
    */
 
   if (
+    text.includes(delimiter) ||
     text.includes(",") ||
     text.includes('"') ||
     text.includes("\n") ||
@@ -1430,7 +1503,6 @@ function csvEscape(value) {
 
 function printParticipants() {
 
-
   if (
     !currentParticipants ||
     currentParticipants.length === 0
@@ -1457,7 +1529,6 @@ function printParticipants() {
 
 async function logoutAdmin() {
 
-
   const token =
     localStorage.getItem(
       "stk_admin_token"
@@ -1466,9 +1537,7 @@ async function logoutAdmin() {
 
   try {
 
-
     if (token) {
-
 
       await fetch(
         API_URL,
@@ -1498,10 +1567,12 @@ async function logoutAdmin() {
 
     }
 
-
   } catch (error) {
 
-    /* Tetap logout lokal */
+    /*
+     * Tetap logout lokal
+     * jika server gagal.
+     */
 
   }
 
@@ -1517,7 +1588,6 @@ async function logoutAdmin() {
 ===================================================== */
 
 function logoutLocal() {
-
 
   localStorage.removeItem(
     "stk_admin_token"
@@ -1576,7 +1646,6 @@ function logoutLocal() {
 
 function goHome() {
 
-
   window.location.href =
     "./";
 
@@ -1589,7 +1658,6 @@ function goHome() {
 ===================================================== */
 
 function escapeHTML(value) {
-
 
   if (
     value === null ||
@@ -1640,7 +1708,6 @@ document.addEventListener(
   "DOMContentLoaded",
   function() {
 
-
     const token =
       localStorage.getItem(
         "stk_admin_token"
@@ -1669,7 +1736,6 @@ document
   .addEventListener(
     "keydown",
     function(event) {
-
 
       if (
         event.key === "Enter"
