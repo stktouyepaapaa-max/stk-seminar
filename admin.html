@@ -10,7 +10,7 @@
   content="width=device-width, initial-scale=1.0"
 >
 
-<title>Login Admin - STK Touye Paapaa</title>
+<title>Dashboard Admin - STK Touye Paapaa</title>
 
 <style>
 
@@ -26,7 +26,7 @@ body {
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1150px;
   margin: auto;
   padding: 30px 20px;
 }
@@ -92,8 +92,8 @@ input:focus {
 button {
   border: none;
   border-radius: 9px;
-  padding: 13px 20px;
-  font-size: 16px;
+  padding: 13px 18px;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
 }
@@ -115,6 +115,16 @@ button:disabled {
 
 .btn-refresh {
   background: #1460dc;
+  color: white;
+}
+
+.btn-download {
+  background: #198754;
+  color: white;
+}
+
+.btn-print {
+  background: #6f42c1;
   color: white;
 }
 
@@ -257,6 +267,67 @@ td {
   display: none !important;
 }
 
+
+/* =====================================================
+   KHUSUS CETAK
+===================================================== */
+
+@media print {
+
+  body {
+    background: white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .card {
+    box-shadow: none;
+    padding: 10px;
+  }
+
+  .stats {
+    margin-bottom: 15px;
+  }
+
+  .stat-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    padding: 15px;
+  }
+
+  .table-wrapper {
+    overflow: visible;
+  }
+
+  table {
+    min-width: 0;
+    width: 100%;
+  }
+
+  th,
+  td {
+    border: 1px solid #999;
+    padding: 8px;
+  }
+
+  .footer {
+    margin-top: 15px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
 @media (max-width: 700px) {
 
   .stats {
@@ -290,7 +361,7 @@ td {
 
 
 <!-- =====================================================
-     HALAMAN LOGIN ADMIN
+     LOGIN ADMIN
 ===================================================== -->
 
 <div id="loginPage">
@@ -390,8 +461,9 @@ td {
     </div>
 
 
-    <div class="card">
+    <!-- INFORMASI ADMIN + TOMBOL -->
 
+    <div class="card">
 
       <div
         id="adminInfo"
@@ -411,13 +483,29 @@ td {
       ></div>
 
 
-      <div class="button-row">
+      <div class="button-row no-print">
 
         <button
           class="btn-refresh"
           onclick="loadDashboard()"
         >
           🔄 REFRESH DATA
+        </button>
+
+
+        <button
+          class="btn-download"
+          onclick="downloadCSV()"
+        >
+          📥 DOWNLOAD CSV
+        </button>
+
+
+        <button
+          class="btn-print"
+          onclick="printParticipants()"
+        >
+          🖨️ CETAK
         </button>
 
 
@@ -532,7 +620,9 @@ td {
 
       <div class="table-wrapper">
 
-        <table>
+        <table
+          id="pesertaTablePrint"
+        >
 
           <thead>
 
@@ -597,11 +687,18 @@ td {
 
 
 /* =====================================================
-   KONFIGURASI API
+   API
 ===================================================== */
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbx2bss58f7H5H-unGRwd5Sfnl7KeBF8zcpeUqh1NKxGqThABj4322DZKxpZ3OXxa44U/exec";
+
+
+/* =====================================================
+   DATA PESERTA DI BROWSER
+===================================================== */
+
+let currentParticipants = [];
 
 
 
@@ -705,8 +802,6 @@ async function loginAdmin() {
 
     }
 
-
-    /* Simpan token sesi */
 
     localStorage.setItem(
       "stk_admin_token",
@@ -946,6 +1041,13 @@ async function loadDashboard() {
 
 
 
+    /* Simpan data peserta */
+
+    currentParticipants =
+      result.peserta || [];
+
+
+
     /* Statistik */
 
     document.getElementById(
@@ -1135,6 +1237,221 @@ async function loadDashboard() {
 
 
 /* =====================================================
+   DOWNLOAD CSV
+===================================================== */
+
+function downloadCSV() {
+
+
+  if (
+    !currentParticipants ||
+    currentParticipants.length === 0
+  ) {
+
+    alert(
+      "Belum ada data peserta untuk diunduh."
+    );
+
+    return;
+
+  }
+
+
+  const headers = [
+
+    "No. Peserta",
+    "Nama",
+    "Instansi",
+    "Jabatan",
+    "WhatsApp",
+    "Email",
+    "Presensi",
+    "Tanggal",
+    "Jam"
+
+  ];
+
+
+  const rows =
+    currentParticipants.map(
+      function(p) {
+
+        return [
+
+          p.no_peserta || "",
+          p.nama || "",
+          p.instansi || "",
+          p.jabatan || "",
+          p.wa || "",
+          p.email || "",
+          p.status_presensi || "BELUM HADIR",
+          p.tanggal_presensi || "",
+          p.jam_presensi || ""
+
+        ];
+
+      }
+    );
+
+
+  const csvRows = [];
+
+
+  csvRows.push(
+    headers.map(csvEscape).join(",")
+  );
+
+
+  rows.forEach(
+    function(row) {
+
+      csvRows.push(
+        row.map(csvEscape).join(",")
+      );
+
+    }
+  );
+
+
+  /*
+   * BOM UTF-8 agar Excel membaca
+   * karakter Indonesia dengan benar.
+   */
+
+  const csvContent =
+    "\uFEFF" +
+    csvRows.join("\r\n");
+
+
+  const blob =
+    new Blob(
+      [csvContent],
+      {
+        type:
+          "text/csv;charset=utf-8;"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const link =
+    document.createElement("a");
+
+
+  const tanggal =
+    new Date()
+      .toISOString()
+      .slice(0,10);
+
+
+  link.href =
+    url;
+
+
+  link.download =
+    "Daftar_Peserta_Seminar_STK_" +
+    tanggal +
+    ".csv";
+
+
+  document.body.appendChild(
+    link
+  );
+
+
+  link.click();
+
+
+  document.body.removeChild(
+    link
+  );
+
+
+  URL.revokeObjectURL(
+    url
+  );
+
+}
+
+
+
+/* =====================================================
+   ESCAPE CSV
+===================================================== */
+
+function csvEscape(value) {
+
+
+  let text =
+    String(
+      value === null ||
+      value === undefined
+        ? ""
+        : value
+    );
+
+
+  /*
+   * Jika mengandung koma,
+   * tanda kutip, atau baris baru,
+   * bungkus dengan tanda kutip.
+   */
+
+  if (
+    text.includes(",") ||
+    text.includes('"') ||
+    text.includes("\n") ||
+    text.includes("\r")
+  ) {
+
+    text =
+      '"' +
+      text.replace(
+        /"/g,
+        '""'
+      ) +
+      '"';
+
+  }
+
+
+  return text;
+
+}
+
+
+
+/* =====================================================
+   CETAK DAFTAR PESERTA
+===================================================== */
+
+function printParticipants() {
+
+
+  if (
+    !currentParticipants ||
+    currentParticipants.length === 0
+  ) {
+
+    alert(
+      "Belum ada data peserta untuk dicetak."
+    );
+
+    return;
+
+  }
+
+
+  window.print();
+
+}
+
+
+
+/* =====================================================
    LOGOUT ADMIN
 ===================================================== */
 
@@ -1220,6 +1537,10 @@ function logoutLocal() {
   localStorage.removeItem(
     "stk_admin_role"
   );
+
+
+  currentParticipants =
+    [];
 
 
   document
