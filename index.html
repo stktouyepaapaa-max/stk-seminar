@@ -640,7 +640,7 @@
           document.getElementById(
             "resultNoPeserta"
           ).textContent =
-            result.data.no_peserta;
+            result.no_peserta;
 
 
           document.getElementById(
@@ -760,7 +760,7 @@
       if (result.success) {
 
         const peserta =
-          result.data;
+          result;
 
 
         message.innerHTML = "";
