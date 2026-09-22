@@ -1,951 +1,921 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>STK Touye Paapaa - Seminar</title>
+  <title>STK Touye Paapaa - Seminar</title>
 
-<style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-*{
-  box-sizing:border-box;
-}
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f7fb;
-  color:#1f2937;
-}
+    .container {
+      width: 100%;
+      max-width: 760px;
+      margin: auto;
+      padding: 20px;
+    }
 
-header{
-  background:#0b5ed7;
-  color:white;
-  text-align:center;
-  padding:35px 20px;
-}
+    /* HEADER */
+    .header {
+      text-align: center;
+      padding: 20px 10px;
+    }
 
-header h1{
-  margin:0 0 12px;
-  font-size:30px;
-}
+    .header h1 {
+      margin: 0;
+      color: #0d5bd7;
+      font-size: 28px;
+    }
 
-header p{
-  margin:0;
-  font-size:16px;
-}
+    .header p {
+      margin: 8px 0 0;
+      color: #555;
+    }
 
-.container{
-  max-width:800px;
-  margin:30px auto;
-  padding:0 20px;
-}
+    /* CARD */
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
 
-.card{
-  background:white;
-  padding:25px;
-  margin-bottom:20px;
-  border-radius:15px;
-  box-shadow:0 4px 15px rgba(0,0,0,.08);
-}
+    .seminar-title {
+      color: #0d5bd7;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
 
-h2{
-  color:#0b5ed7;
-}
+    .info {
+      background: #eef6ff;
+      border-radius: 12px;
+      padding: 18px;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
 
-.info{
-  background:#eef6ff;
-  padding:15px;
-  border-radius:10px;
-  margin:15px 0;
-  line-height:1.8;
-}
+    .description {
+      font-size: 17px;
+      line-height: 1.6;
+    }
 
-label{
-  display:block;
-  font-weight:bold;
-  margin-top:15px;
-}
+    /* BUTTON */
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #0d5bd7;
+      color: white;
+      margin-top: 10px;
+    }
 
-input{
-  width:100%;
-  padding:12px;
-  margin-top:6px;
-  border:1px solid #ccc;
-  border-radius:7px;
-  font-size:15px;
-}
+    button:hover {
+      background: #0849b5;
+    }
 
-button{
-  width:100%;
-  padding:14px;
-  margin-top:20px;
-  border:0;
-  border-radius:7px;
-  background:#0b5ed7;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .button-secondary {
+      background: #ffffff;
+      color: #0d5bd7;
+      border: 2px solid #0d5bd7;
+    }
 
-button:hover{
-  background:#084db3;
-}
+    .button-secondary:hover {
+      background: #eef6ff;
+    }
 
-button:disabled{
-  background:#9ca3af;
-  cursor:not-allowed;
-}
+    .back-button {
+      background: #777;
+    }
 
-.secondary{
-  background:#64748b;
-}
+    /* HOME */
+    .home-actions {
+      margin-top: 25px;
+    }
 
-.secondary:hover{
-  background:#475569;
-}
+    .home-actions .main-button {
+      margin-top: 0;
+      margin-bottom: 18px;
+    }
 
-.success{
-  text-align:center;
-  background:#f0fdf4;
-  border:2px solid #16a34a;
-}
+    .already {
+      text-align: center;
+      margin: 25px 0 5px;
+      color: #555;
+    }
 
-.success h2{
-  color:#15803d;
-}
+    /* FORM */
+    .page-title {
+      color: #0d5bd7;
+      margin-top: 0;
+      font-size: 27px;
+    }
 
-.nomor{
-  font-size:28px;
-  font-weight:bold;
-  color:#15803d;
-  margin:15px;
-}
+    label {
+      display: block;
+      margin-top: 17px;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
 
-#error,
-#presensiError{
-  color:#b91c1c;
-  margin-top:15px;
-  text-align:center;
-}
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 9px;
+      font-size: 16px;
+    }
 
-.hidden{
-  display:none;
-}
+    input:focus {
+      outline: none;
+      border-color: #0d5bd7;
+    }
 
-.peserta-info{
-  background:#eef6ff;
-  border-radius:10px;
-  padding:18px;
-  margin-top:20px;
-  line-height:1.8;
-}
+    .required {
+      color: red;
+    }
 
-.peserta-info strong{
-  color:#0b5ed7;
-}
+    /* SUCCESS */
+    .success {
+      text-align: center;
+      padding: 20px 5px;
+    }
 
-.status-hadir{
-  color:#15803d;
-  font-size:24px;
-  font-weight:bold;
-  margin:15px 0;
-}
+    .success-icon {
+      font-size: 55px;
+      color: #159447;
+    }
 
-.menu{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-}
+    .success h2 {
+      color: #159447;
+    }
 
-.menu button{
-  margin-top:0;
-}
+    .participant-number {
+      background: #eef6ff;
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 23px;
+      font-weight: bold;
+      color: #0d5bd7;
+      margin: 20px 0;
+    }
 
-</style>
+    /* PARTICIPANT INFO */
+    .participant-info {
+      background: #f4f7fb;
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 20px;
+      line-height: 1.8;
+    }
+
+    .attendance-success {
+      background: #e9f8ef;
+      color: #147a3e;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .error {
+      background: #fdecec;
+      color: #b42318;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 15px;
+      color: #555;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+      padding: 20px 0;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .seminar-title {
+        font-size: 24px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-
-<h1>STK TOUYE PAPAA</h1>
-
-<p>Pendaftaran & Presensi Seminar</p>
-
-</header>
-
-
 <div class="container">
 
+  <!-- HEADER -->
+  <div class="header">
+    <h1>STK TOUYE PAPAA</h1>
+    <p>Pendaftaran & Presensi Seminar</p>
+  </div>
 
-<!-- =====================================================
-     INFORMASI SEMINAR
-====================================================== -->
 
-<div class="card">
+  <!-- ========================= -->
+  <!-- HALAMAN UTAMA -->
+  <!-- ========================= -->
 
-<h2>Seminar AI dalam Pendidikan</h2>
+  <section id="homePage">
 
-<div class="info">
+    <div class="card">
 
-📅 <b>15 Oktober 2026</b><br>
+      <div class="seminar-title">
+        Seminar AI dalam Pendidikan
+      </div>
 
-🕘 09.00 WIT<br>
+      <div class="info">
+        📅 <strong>15 Oktober 2026</strong><br>
+        🕘 09.00 WIT<br>
+        📍 Aula STK Touye Paapaa
+      </div>
 
-📍 Aula STK Touye Paapaa
+      <div class="description">
+        Seminar tentang pemanfaatan Artificial Intelligence
+        dalam dunia pendidikan.
+      </div>
+
+    </div>
+
+
+    <div class="card home-actions">
+
+      <button
+        class="main-button"
+        onclick="showPage('registrationPage')">
+        DAFTAR SEMINAR
+      </button>
+
+      <div class="already">
+        Sudah mendaftar?
+      </div>
+
+      <button
+        class="button-secondary"
+        onclick="showPage('attendancePage')">
+        PRESENSI SEMINAR
+      </button>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ========================= -->
+  <!-- HALAMAN PENDAFTARAN -->
+  <!-- ========================= -->
+
+  <section id="registrationPage" class="hidden">
+
+    <div class="card">
+
+      <h2 class="page-title">
+        Pendaftaran Seminar
+      </h2>
+
+      <p>
+        Silakan lengkapi data berikut untuk melakukan
+        pendaftaran seminar.
+      </p>
+
+
+      <form id="registrationForm">
+
+        <label>
+          Nama Lengkap <span class="required">*</span>
+        </label>
+
+        <input
+          type="text"
+          id="nama"
+          required
+          placeholder="Masukkan nama lengkap">
+
+
+        <label>
+          NIP / NIDN / NIK
+        </label>
+
+        <input
+          type="text"
+          id="identitas"
+          placeholder="Masukkan NIP, NIDN atau NIK">
+
+
+        <label>
+          Instansi / Sekolah / Lembaga
+          <span class="required">*</span>
+        </label>
+
+        <input
+          type="text"
+          id="instansi"
+          required
+          placeholder="Nama instansi/sekolah">
+
+
+        <label>
+          Jabatan
+        </label>
+
+        <input
+          type="text"
+          id="jabatan"
+          placeholder="Jabatan">
+
+
+        <label>
+          Nomor WhatsApp
+          <span class="required">*</span>
+        </label>
+
+        <input
+          type="text"
+          id="wa"
+          required
+          placeholder="Contoh: 08123456789">
+
+
+        <label>
+          Email
+          <span class="required">*</span>
+        </label>
+
+        <input
+          type="email"
+          id="email"
+          required
+          placeholder="nama@email.com">
+
+
+        <button type="submit">
+          DAFTAR SEKARANG
+        </button>
+
+      </form>
+
+      <button
+        class="back-button"
+        onclick="showPage('homePage')">
+        ← KEMBALI
+      </button>
+
+      <div id="registrationMessage"></div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ========================= -->
+  <!-- HALAMAN PRESENSI -->
+  <!-- ========================= -->
+
+  <section id="attendancePage" class="hidden">
+
+    <div class="card">
+
+      <h2 class="page-title">
+        Presensi Seminar
+      </h2>
+
+      <p>
+        Masukkan nomor peserta yang Anda terima
+        setelah melakukan pendaftaran.
+      </p>
+
+
+      <label>
+        Nomor Peserta
+      </label>
+
+      <input
+        type="text"
+        id="noPeserta"
+        placeholder="Contoh: STK-2026-0002">
+
+
+      <button onclick="verifikasiPeserta()">
+        VERIFIKASI PESERTA
+      </button>
+
+
+      <div id="attendanceMessage"></div>
+
+
+      <div
+        id="participantInfo"
+        class="participant-info hidden">
+      </div>
+
+
+      <button
+        id="attendanceButton"
+        class="hidden"
+        onclick="simpanKehadiran()">
+        ✓ HADIR / PRESENSI
+      </button>
+
+
+      <button
+        class="back-button"
+        onclick="showPage('homePage')">
+        ← KEMBALI
+      </button>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ========================= -->
+  <!-- HALAMAN PENDAFTARAN BERHASIL -->
+  <!-- ========================= -->
+
+  <section id="registrationSuccess" class="hidden">
+
+    <div class="card success">
+
+      <div class="success-icon">
+        ✓
+      </div>
+
+      <h2>
+        Pendaftaran Berhasil
+      </h2>
+
+      <p>
+        Terima kasih. Anda telah berhasil
+        mendaftar sebagai peserta seminar.
+      </p>
+
+      <div class="participant-number">
+        <div style="font-size:14px;color:#555;">
+          NOMOR PESERTA
+        </div>
+
+        <span id="resultNoPeserta"></span>
+      </div>
+
+      <p>
+        <strong>Simpan nomor peserta ini.</strong><br>
+        Nomor tersebut digunakan untuk melakukan presensi
+        pada saat seminar.
+      </p>
+
+
+      <button
+        onclick="showPage('attendancePage')">
+        PRESENSI SEMINAR
+      </button>
+
+
+      <button
+        class="back-button"
+        onclick="showPage('homePage')">
+        KEMBALI KE BERANDA
+      </button>
+
+    </div>
+
+  </section>
+
+
+
+  <footer>
+    © 2026 STK Touye Paapaa Deiyai
+  </footer>
 
 </div>
 
-<p>
-Seminar tentang pemanfaatan Artificial Intelligence
-dalam dunia pendidikan.
-</p>
-
-</div>
-
-
-<!-- =====================================================
-     MENU
-====================================================== -->
-
-<div class="menu">
-
-<button onclick="tampilkanPendaftaran()">
-PENDAFTARAN
-</button>
-
-<button onclick="tampilkanPresensi()">
-PRESENSI
-</button>
-
-</div>
-
-
-<!-- =====================================================
-     PENDAFTARAN
-====================================================== -->
-
-<div class="card" id="pendaftaranSection">
-
-<h2>Formulir Pendaftaran</h2>
-
-<form id="form">
-
-<label>Nama Lengkap *</label>
-
-<input
-  id="nama"
-  required
->
-
-
-<label>NIP / NIDN / NIK</label>
-
-<input
-  id="identitas"
->
-
-
-<label>Instansi / Sekolah *</label>
-
-<input
-  id="instansi"
-  required
->
-
-
-<label>Jabatan</label>
-
-<input
-  id="jabatan"
->
-
-
-<label>Nomor WhatsApp *</label>
-
-<input
-  id="wa"
-  required
->
-
-
-<label>Email *</label>
-
-<input
-  type="email"
-  id="email"
-  required
->
-
-
-<button
-  type="submit"
-  id="btn"
->
-DAFTAR SEKARANG
-</button>
-
-
-<div id="error"></div>
-
-</form>
-
-</div>
-
-
-<!-- =====================================================
-     HASIL PENDAFTARAN
-====================================================== -->
-
-<div
-  class="card success hidden"
-  id="hasil"
->
-
-<h2>✓ Pendaftaran Berhasil</h2>
-
-<p>Nomor peserta Anda:</p>
-
-<div
-  class="nomor"
-  id="nomor"
-></div>
-
-<p>
-Simpan nomor peserta ini untuk presensi seminar.
-</p>
-
-<button
-  onclick="tampilkanPresensi()"
->
-LANJUT KE PRESENSI
-</button>
-
-</div>
-
-
-<!-- =====================================================
-     PRESENSI
-====================================================== -->
-
-<div
-  class="card hidden"
-  id="presensiSection"
->
-
-<h2>Presensi Seminar</h2>
-
-<p>
-Masukkan nomor peserta yang Anda terima setelah melakukan pendaftaran.
-</p>
-
-
-<label>Nomor Peserta</label>
-
-<input
-  id="noPeserta"
-  placeholder="Contoh: STK-2026-0002"
->
-
-
-<button
-  id="btnVerifikasi"
-  onclick="verifikasiPeserta()"
->
-VERIFIKASI PESERTA
-</button>
-
-
-<div id="presensiError"></div>
-
-
-<!-- DATA PESERTA -->
-
-<div
-  class="peserta-info hidden"
-  id="dataPeserta"
->
-
-<div>
-<strong>Nama</strong><br>
-<span id="namaPeserta"></span>
-</div>
-
-<br>
-
-<div>
-<strong>Nomor Peserta</strong><br>
-<span id="nomorPeserta"></span>
-</div>
-
-<br>
-
-<div>
-<strong>Instansi</strong><br>
-<span id="instansiPeserta"></span>
-</div>
-
-<br>
-
-<div>
-<strong>Seminar</strong><br>
-<span>Seminar AI dalam Pendidikan</span>
-</div>
-
-
-<button
-  id="btnHadir"
-  onclick="simpanKehadiran()"
->
-✓ HADIR
-</button>
-
-</div>
-
-
-<!-- HASIL PRESENSI -->
-
-<div
-  class="success hidden"
-  id="hasilPresensi"
->
-
-<div class="status-hadir">
-✓ PRESENSI BERHASIL
-</div>
-
-<p id="hasilNama"></p>
-
-<p>
-Nomor Peserta:
-<strong id="hasilNomor"></strong>
-</p>
-
-<p>
-Tanggal:
-<strong id="hasilTanggal"></strong>
-</p>
-
-<p>
-Jam:
-<strong id="hasilJam"></strong>
-</p>
-
-<p>
-Status:
-<strong>HADIR</strong>
-</p>
-
-</div>
-
-</div>
-
-
-</div>
 
 
 <script>
 
+  /* ========================= */
+  /* API GOOGLE APPS SCRIPT */
+  /* ========================= */
 
-// =====================================================
-// API GOOGLE APPS SCRIPT
-// =====================================================
-
-const API_URL =
-"https://script.google.com/macros/s/AKfycbx2bss58f7H5H-unGRwd5Sfnl7KeBF8zcpeUqh1NKxGqThABj4322DZKxpZ3OXxa44U/exec";
-
-
-// =====================================================
-// MENU PENDAFTARAN
-// =====================================================
-
-function tampilkanPendaftaran(){
-
-  document.getElementById(
-    "pendaftaranSection"
-  ).classList.remove("hidden");
-
-  document.getElementById(
-    "hasil"
-  ).classList.add("hidden");
-
-  document.getElementById(
-    "presensiSection"
-  ).classList.add("hidden");
-
-}
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbx2bss58f7H5H-unGRwd5Sfnl7KeBF8zcpeUqh1NKxGqThABj4322DZKxpZ3OXxa44U/exec";
 
 
-// =====================================================
-// MENU PRESENSI
-// =====================================================
+  /* ========================= */
+  /* PINDAH HALAMAN */
+  /* ========================= */
 
-function tampilkanPresensi(){
+  function showPage(pageId) {
 
-  document.getElementById(
-    "pendaftaranSection"
-  ).classList.add("hidden");
+    const pages = [
+      "homePage",
+      "registrationPage",
+      "attendancePage",
+      "registrationSuccess"
+    ];
 
-  document.getElementById(
-    "hasil"
-  ).classList.add("hidden");
+    pages.forEach(function(id) {
+      document
+        .getElementById(id)
+        .classList.add("hidden");
+    });
 
-  document.getElementById(
-    "presensiSection"
-  ).classList.remove("hidden");
+    document
+      .getElementById(pageId)
+      .classList.remove("hidden");
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-}
-
-
-// =====================================================
-// PENDAFTARAN
-// =====================================================
-
-document
-.getElementById("form")
-.addEventListener(
-  "submit",
-  async function(e){
-
-    e.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
 
 
-    const btn =
-      document.getElementById("btn");
 
-    const error =
-      document.getElementById("error");
+  /* ========================= */
+  /* PENDAFTARAN */
+  /* ========================= */
 
+  document
+    .getElementById("registrationForm")
+    .addEventListener("submit", async function(e) {
 
-    btn.disabled = true;
-
-    btn.textContent =
-      "Memproses...";
-
-    error.textContent = "";
+      e.preventDefault();
 
 
-    const data = {
+      const message =
+        document.getElementById("registrationMessage");
 
-      nama:
-        document.getElementById(
-          "nama"
-        ).value.trim(),
-
-      identitas:
-        document.getElementById(
-          "identitas"
-        ).value.trim(),
-
-      instansi:
-        document.getElementById(
-          "instansi"
-        ).value.trim(),
-
-      jabatan:
-        document.getElementById(
-          "jabatan"
-        ).value.trim(),
-
-      wa:
-        document.getElementById(
-          "wa"
-        ).value.trim(),
-
-      email:
-        document.getElementById(
-          "email"
-        ).value.trim(),
-
-      seminar_id:
-        "SEM001"
-
-    };
+      message.innerHTML =
+        '<div class="loading">⏳ Sedang memproses pendaftaran...</div>';
 
 
-    try{
+      const data = {
 
-      const response =
-        await fetch(
-          API_URL,
-          {
-            method:"POST",
+        nama:
+          document.getElementById("nama").value.trim(),
 
-            headers:{
-              "Content-Type":
-                "text/plain;charset=utf-8"
-            },
+        identitas:
+          document.getElementById("identitas").value.trim(),
 
-            body:
-              JSON.stringify(data)
-          }
-        );
+        instansi:
+          document.getElementById("instansi").value.trim(),
+
+        jabatan:
+          document.getElementById("jabatan").value.trim(),
+
+        wa:
+          document.getElementById("wa").value.trim(),
+
+        email:
+          document.getElementById("email").value.trim(),
+
+        seminar_id:
+          "SEM001"
+      };
+
+
+      try {
+
+        const response = await fetch(API_URL, {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "text/plain;charset=utf-8"
+          },
+
+          body: JSON.stringify(data)
+
+        });
+
+
+        const result =
+          await response.json();
+
+
+        if (result.success) {
+
+          document.getElementById(
+            "resultNoPeserta"
+          ).textContent =
+            result.data.no_peserta;
+
+
+          document.getElementById(
+            "registrationForm"
+          ).reset();
+
+
+          message.innerHTML = "";
+
+
+          showPage("registrationSuccess");
+
+        } else {
+
+          message.innerHTML =
+            '<div class="error">' +
+            (result.message ||
+              "Pendaftaran gagal.") +
+            "</div>";
+
+        }
+
+      } catch (error) {
+
+        message.innerHTML =
+          '<div class="error">' +
+          "Terjadi kesalahan koneksi. Silakan coba lagi." +
+          "</div>";
+
+        console.error(error);
+
+      }
+
+    });
+
+
+
+  /* ========================= */
+  /* VERIFIKASI PESERTA */
+  /* ========================= */
+
+  async function verifikasiPeserta() {
+
+    const noPeserta =
+      document
+        .getElementById("noPeserta")
+        .value
+        .trim();
+
+
+    const message =
+      document.getElementById(
+        "attendanceMessage"
+      );
+
+    const info =
+      document.getElementById(
+        "participantInfo"
+      );
+
+    const attendanceButton =
+      document.getElementById(
+        "attendanceButton"
+      );
+
+
+    info.classList.add("hidden");
+
+    attendanceButton.classList.add("hidden");
+
+
+    if (!noPeserta) {
+
+      message.innerHTML =
+        '<div class="error">' +
+        "Silakan masukkan nomor peserta." +
+        "</div>";
+
+      return;
+    }
+
+
+    message.innerHTML =
+      '<div class="loading">' +
+      "⏳ Memeriksa data peserta..." +
+      "</div>";
+
+
+    try {
+
+      const response = await fetch(API_URL, {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify({
+
+          action:
+            "verifikasi_presensi",
+
+          no_peserta:
+            noPeserta
+
+        })
+
+      });
 
 
       const result =
         await response.json();
 
 
-      if(!result.success){
+      if (result.success) {
 
-        throw new Error(
-          result.message
+        const peserta =
+          result.data;
+
+
+        message.innerHTML = "";
+
+
+        info.innerHTML =
+
+          "<strong>Peserta ditemukan</strong><br><br>" +
+
+          "<strong>Nomor Peserta:</strong> " +
+          peserta.no_peserta +
+          "<br>" +
+
+          "<strong>Nama:</strong> " +
+          peserta.nama +
+          "<br>" +
+
+          "<strong>Instansi:</strong> " +
+          peserta.instansi +
+          "<br>" +
+
+          "<strong>Jabatan:</strong> " +
+          (peserta.jabatan || "-");
+
+
+        info.classList.remove("hidden");
+
+
+        attendanceButton.classList.remove(
+          "hidden"
         );
+
+
+        window.currentParticipant =
+          peserta;
+
+      } else {
+
+        message.innerHTML =
+          '<div class="error">' +
+          (result.message ||
+            "Peserta tidak ditemukan.") +
+          "</div>";
 
       }
 
+    } catch (error) {
 
-      document
-        .getElementById(
-          "pendaftaranSection"
-        )
-        .classList.add("hidden");
+      message.innerHTML =
+        '<div class="error">' +
+        "Terjadi kesalahan koneksi." +
+        "</div>";
 
+      console.error(error);
 
-      document
-        .getElementById(
-          "nomor"
-        )
-        .textContent =
-          result.data.no_peserta;
+    }
+
+  }
 
 
-      document
-        .getElementById(
-          "hasil"
-        )
-        .classList.remove("hidden");
+
+  /* ========================= */
+  /* SIMPAN PRESENSI */
+  /* ========================= */
+
+  async function simpanKehadiran() {
+
+    const peserta =
+      window.currentParticipant;
 
 
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
+    if (!peserta) {
+      return;
+    }
+
+
+    const message =
+      document.getElementById(
+        "attendanceMessage"
+      );
+
+
+    message.innerHTML =
+      '<div class="loading">' +
+      "⏳ Menyimpan presensi..." +
+      "</div>";
+
+
+    try {
+
+      const response = await fetch(API_URL, {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify({
+
+          action:
+            "hadir_presensi",
+
+          no_peserta:
+            peserta.no_peserta,
+
+          seminar_id:
+            peserta.seminar_id || "SEM001"
+
+        })
+
       });
 
 
-    }
-    catch(err){
-
-      error.textContent =
-        "Pendaftaran gagal. Silakan coba lagi.";
-
-      btn.disabled = false;
-
-      btn.textContent =
-        "DAFTAR SEKARANG";
-
-    }
-
-  }
-);
+      const result =
+        await response.json();
 
 
-// =====================================================
-// VERIFIKASI PESERTA
-// =====================================================
+      if (result.success) {
 
-async function verifikasiPeserta(){
-
-  const noPeserta =
-    document
-      .getElementById(
-        "noPeserta"
-      )
-      .value
-      .trim();
+        message.innerHTML =
+          '<div class="attendance-success">' +
+          "✓ Presensi berhasil dicatat." +
+          "</div>";
 
 
-  const error =
-    document.getElementById(
-      "presensiError"
-    );
+        document
+          .getElementById(
+            "attendanceButton"
+          )
+          .classList.add("hidden");
 
+      } else {
 
-  const btn =
-    document.getElementById(
-      "btnVerifikasi"
-    );
+        message.innerHTML =
+          '<div class="error">' +
+          (result.message ||
+            "Presensi gagal.") +
+          "</div>";
 
+      }
 
-  const dataPeserta =
-    document.getElementById(
-      "dataPeserta"
-    );
+    } catch (error) {
 
+      message.innerHTML =
+        '<div class="error">' +
+        "Terjadi kesalahan koneksi." +
+        "</div>";
 
-  error.textContent = "";
-
-
-  if(!noPeserta){
-
-    error.textContent =
-      "Silakan masukkan nomor peserta.";
-
-    return;
-
-  }
-
-
-  btn.disabled = true;
-
-  btn.textContent =
-    "Memverifikasi...";
-
-  dataPeserta.classList.add(
-    "hidden"
-  );
-
-
-  try{
-
-    const response =
-      await fetch(
-        API_URL,
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "text/plain;charset=utf-8"
-          },
-
-          body:
-            JSON.stringify({
-
-              action:
-                "verifikasi_presensi",
-
-              no_peserta:
-                noPeserta
-
-            })
-
-          }
-        );
-
-
-    const result =
-      await response.json();
-
-
-    if(!result.success){
-
-      throw new Error(
-        result.message
-      );
+      console.error(error);
 
     }
 
-
-    document
-      .getElementById(
-        "namaPeserta"
-      )
-      .textContent =
-        result.data.nama;
-
-
-    document
-      .getElementById(
-        "nomorPeserta"
-      )
-      .textContent =
-        result.data.no_peserta;
-
-
-    document
-      .getElementById(
-        "instansiPeserta"
-      )
-      .textContent =
-        result.data.instansi;
-
-
-    dataPeserta.classList.remove(
-      "hidden"
-    );
-
-
   }
-  catch(err){
-
-    error.textContent =
-      err.message ||
-      "Nomor peserta tidak ditemukan.";
-
-  }
-  finally{
-
-    btn.disabled = false;
-
-    btn.textContent =
-      "VERIFIKASI PESERTA";
-
-  }
-
-}
-
-
-// =====================================================
-// SIMPAN KEHADIRAN
-// =====================================================
-
-async function simpanKehadiran(){
-
-  const noPeserta =
-    document
-      .getElementById(
-        "noPeserta"
-      )
-      .value
-      .trim();
-
-
-  const btn =
-    document.getElementById(
-      "btnHadir"
-    );
-
-
-  const error =
-    document.getElementById(
-      "presensiError"
-    );
-
-
-  error.textContent = "";
-
-
-  btn.disabled = true;
-
-  btn.textContent =
-    "Menyimpan Presensi...";
-
-
-  try{
-
-    const response =
-      await fetch(
-        API_URL,
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "text/plain;charset=utf-8"
-          },
-
-          body:
-            JSON.stringify({
-
-              action:
-                "hadir_presensi",
-
-              no_peserta:
-                noPeserta
-
-            })
-
-          }
-        );
-
-
-    const result =
-      await response.json();
-
-
-    if(!result.success){
-
-      throw new Error(
-        result.message
-      );
-
-    }
-
-
-    // Sembunyikan data peserta
-
-    document
-      .getElementById(
-        "dataPeserta"
-      )
-      .classList.add(
-        "hidden"
-      );
-
-
-    // Tampilkan hasil
-
-    document
-      .getElementById(
-        "hasilNama"
-      )
-      .textContent =
-        result.data.nama;
-
-
-    document
-      .getElementById(
-        "hasilNomor"
-      )
-      .textContent =
-        result.data.no_peserta;
-
-
-    document
-      .getElementById(
-        "hasilTanggal"
-      )
-      .textContent =
-        result.data.tanggal;
-
-
-    document
-      .getElementById(
-        "hasilJam"
-      )
-      .textContent =
-        result.data.jam;
-
-
-    document
-      .getElementById(
-        "hasilPresensi"
-      )
-      .classList.remove(
-        "hidden"
-      );
-
-
-    window.scrollTo({
-      top:0,
-      behavior:"smooth"
-    });
-
-
-  }
-  catch(err){
-
-    error.textContent =
-      err.message ||
-      "Presensi gagal. Silakan coba lagi.";
-
-    btn.disabled = false;
-
-    btn.textContent =
-      "✓ HADIR";
-
-  }
-
-}
 
 </script>
 
