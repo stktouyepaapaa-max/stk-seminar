@@ -515,6 +515,194 @@ input {
 
 
 /* =========================================================
+   KELOLA KEGIATAN
+   ========================================================= */
+
+.activity-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  padding: 28px 30px 30px;
+  margin-bottom: 25px;
+}
+
+.activity-card-title {
+  color: #1764d9;
+  font-size: 25px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.activity-card-subtitle {
+  color: #666;
+  font-size: 15px;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+.activity-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.activity-list-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.activity-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.activity-table th {
+  background: #1764d9;
+  color: #fff;
+  padding: 11px 10px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.activity-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid #e1e5ea;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.activity-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.activity-status-draft { background: #eef1f5; color: #5f6b76; }
+.activity-status-aktif { background: #d9f6e5; color: #087c35; }
+.activity-status-selesai { background: #e4efff; color: #174ea6; }
+.activity-status-arsip { background: #f1e7ff; color: #7041c7; }
+
+.small-action-button {
+  border: none;
+  border-radius: 7px;
+  min-height: 34px;
+  padding: 0 10px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.btn-edit-activity { background: #1764d9; }
+.btn-new-activity { background: #159447; }
+.btn-cancel-activity { background: #777; }
+
+.activity-form {
+  display: none;
+  border-top: 1px solid #e1e5ea;
+  padding-top: 24px;
+}
+
+.activity-form.show { display: block; }
+
+.activity-form-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: #1764d9;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-grid .full { grid-column: 1 / -1; }
+
+.activity-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+.activity-field input,
+.activity-field select,
+.activity-field textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.activity-field input,
+.activity-field select { height: 43px; }
+.activity-field textarea { min-height: 88px; resize: vertical; }
+.activity-field input:focus,
+.activity-field select:focus,
+.activity-field textarea:focus {
+  border-color: #1764d9;
+  box-shadow: 0 0 0 3px rgba(23,100,217,.10);
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.checkbox-item input { width: 18px; height: 18px; }
+
+.mode-box {
+  display: none;
+  margin-top: 16px;
+  padding: 15px;
+  background: #f7faff;
+  border: 1px solid #dce9fb;
+  border-radius: 10px;
+}
+
+.mode-box.show { display: block; }
+
+.activity-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.activity-message {
+  min-height: 22px;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* =========================================================
    RESPONSIVE
 ========================================================= */
 
@@ -576,7 +764,7 @@ input {
     </h1>
 
     <p>
-      Login Administrator Seminar
+      Login Administrator STK
     </p>
 
   </div>
@@ -665,7 +853,7 @@ input {
       </h1>
 
       <p>
-        Dashboard Admin Seminar
+        Dashboard Admin Kegiatan & Sertifikasi
       </p>
 
     </div>
@@ -734,6 +922,217 @@ input {
 
     </div>
 
+
+    <!-- KELOLA KEGIATAN -->
+    <div class="activity-card">
+
+      <div class="activity-card-title">📅 Kelola Kegiatan</div>
+      <div class="activity-card-subtitle">
+        Tambahkan dan ubah Seminar, Pelatihan, Workshop, Webinar, Dies Natalis, atau kegiatan STK lainnya.
+        Data kegiatan tersimpan di Sheet KEGIATAN. Link Zoom/Google Meet dapat diisi kemudian tanpa membuat kegiatan baru.
+      </div>
+
+      <div class="activity-toolbar">
+        <strong id="activityCountLabel">0 kegiatan</strong>
+        <button class="action-button btn-csv" type="button" onclick="newActivity()">➕ KEGIATAN BARU</button>
+      </div>
+
+      <div class="activity-list-wrapper">
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Nama Kegiatan</th>
+              <th>Jenis</th>
+              <th>Tanggal</th>
+              <th>Pelaksanaan</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="activityTableBody">
+            <tr><td colspan="7" class="empty-row">Belum ada data kegiatan.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="activityForm" class="activity-form">
+        <div class="activity-form-title" id="activityFormTitle">➕ Tambah Kegiatan</div>
+
+        <input type="hidden" id="activityId">
+
+        <div class="form-grid">
+          <div class="activity-field">
+            <label for="activityKode">Kode Kegiatan *</label>
+            <input id="activityKode" type="text" placeholder="Contoh: STK-AI-2026">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityJenis">Jenis Kegiatan *</label>
+            <select id="activityJenis">
+              <option>Seminar</option>
+              <option>Pelatihan</option>
+              <option>Workshop</option>
+              <option>Webinar</option>
+              <option>Dies Natalis</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+
+          <div class="activity-field full">
+            <label for="activityNama">Nama Kegiatan *</label>
+            <input id="activityNama" type="text" placeholder="Contoh: Seminar AI dalam Pendidikan">
+          </div>
+
+          <div class="activity-field full">
+            <label for="activityTema">Tema / Judul</label>
+            <input id="activityTema" type="text" placeholder="Tema atau judul yang ditampilkan pada sertifikat">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityTanggal">Tanggal Pelaksanaan *</label>
+            <input id="activityTanggal" type="date">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityStatus">Status</label>
+            <select id="activityStatus">
+              <option>DRAFT</option>
+              <option>AKTIF</option>
+              <option>SELESAI</option>
+              <option>ARSIP</option>
+            </select>
+          </div>
+
+          <div class="activity-field">
+            <label for="activityJamMulai">Waktu Mulai (WIT)</label>
+            <input id="activityJamMulai" type="time">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityJamSelesai">Waktu Selesai (WIT)</label>
+            <input id="activityJamSelesai" type="time">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityMode">Mode Pelaksanaan</label>
+            <select id="activityMode" onchange="updateActivityModeFields()">
+              <option>Offline</option>
+              <option>Online</option>
+              <option>Hybrid</option>
+            </select>
+          </div>
+
+          <div class="activity-field">
+            <label for="activityTempat">Tempat / Gedung</label>
+            <input id="activityTempat" type="text" placeholder="Contoh: Aula STK Touye Paapaa">
+          </div>
+
+          <div class="activity-field full">
+            <label for="activityAlamat">Alamat Lokasi Offline</label>
+            <input id="activityAlamat" type="text" placeholder="Alamat lengkap tempat kegiatan">
+          </div>
+        </div>
+
+        <div id="onlineFields" class="mode-box">
+          <div class="form-grid">
+            <div class="activity-field">
+              <label for="activityPlatform">Platform Online</label>
+              <select id="activityPlatform">
+                <option>Zoom</option>
+                <option>Google Meet</option>
+                <option>Microsoft Teams</option>
+                <option>Lainnya</option>
+              </select>
+            </div>
+            <div class="activity-field">
+              <label for="activityMeetingId">Meeting ID</label>
+              <input id="activityMeetingId" type="text" placeholder="Diisi saat tersedia">
+            </div>
+            <div class="activity-field full">
+              <label for="activityLink">Link Meeting</label>
+              <input id="activityLink" type="url" placeholder="Link Zoom/Google Meet dapat diisi kemudian">
+            </div>
+            <div class="activity-field">
+              <label for="activityPasscode">Passcode</label>
+              <input id="activityPasscode" type="text" placeholder="Diisi saat tersedia">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-top:16px;">
+          <div class="activity-field full">
+            <label for="activityDeskripsi">Deskripsi</label>
+            <textarea id="activityDeskripsi" placeholder="Uraian singkat kegiatan"></textarea>
+          </div>
+
+          <div class="activity-field">
+            <label for="activityNarasumber">Narasumber</label>
+            <input id="activityNarasumber" type="text" placeholder="Nama narasumber">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityModerator">Moderator</label>
+            <input id="activityModerator" type="text" placeholder="Nama moderator">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityPenyelenggara">Penyelenggara</label>
+            <input id="activityPenyelenggara" type="text" value="STK Touye Paapaa">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityKontak">Kontak Panitia</label>
+            <input id="activityKontak" type="text" placeholder="WhatsApp / email panitia">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityBatas">Batas Peserta</label>
+            <input id="activityBatas" type="number" min="0" placeholder="Kosong = tidak dibatasi">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityRegMulai">Pendaftaran Mulai</label>
+            <input id="activityRegMulai" type="datetime-local">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityRegSelesai">Pendaftaran Selesai</label>
+            <input id="activityRegSelesai" type="datetime-local">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityMateri">Link Materi</label>
+            <input id="activityMateri" type="url" placeholder="Opsional">
+          </div>
+
+          <div class="activity-field">
+            <label for="activityDokumentasi">Link Dokumentasi</label>
+            <input id="activityDokumentasi" type="url" placeholder="Opsional">
+          </div>
+
+          <div class="activity-field full">
+            <label for="activityCatatan">Catatan</label>
+            <textarea id="activityCatatan" placeholder="Catatan tambahan untuk panitia/admin"></textarea>
+          </div>
+
+          <div class="activity-field full">
+            <label>Pengaturan</label>
+            <div class="checkbox-row">
+              <label class="checkbox-item"><input id="activityPresensi" type="checkbox" checked> Presensi aktif</label>
+              <label class="checkbox-item"><input id="activitySertifikat" type="checkbox" checked> Sertifikat aktif</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-form-actions">
+          <button class="small-action-button btn-cancel-activity" type="button" onclick="cancelActivityForm()">BATAL</button>
+          <button class="action-button btn-refresh" type="button" onclick="saveActivity()">💾 SIMPAN KEGIATAN</button>
+        </div>
+
+        <div id="activityMessage" class="activity-message"></div>
+      </div>
+    </div>
 
     <!-- STATISTIK -->
 
@@ -1255,6 +1654,7 @@ async function loginAdmin() {
 
 
     await loadDashboard();
+    await loadActivities();
 
   }
 
@@ -1631,6 +2031,252 @@ function renderParticipantTable(
 
 }
 
+
+/* ======================================================
+   KELOLA KEGIATAN
+====================================================== */
+
+let currentActivities = [];
+
+async function loadActivities() {
+  const token = localStorage.getItem("stk_admin_token");
+  if (!token) return;
+
+  try {
+    const result = await apiRequest({
+      action: "admin_list_kegiatan",
+      token: token
+    });
+
+    if (!result.success) {
+      throw new Error(result.message || "Daftar kegiatan gagal dibaca.");
+    }
+
+    currentActivities = Array.isArray(result.kegiatan) ? result.kegiatan : [];
+    renderActivityTable(currentActivities);
+  } catch (error) {
+    const body = document.getElementById("activityTableBody");
+    if (body) {
+      body.innerHTML = `<tr><td colspan="7" class="empty-row">Gagal memuat kegiatan: ${escapeHTML(error.message)}</td></tr>`;
+    }
+  }
+}
+
+function renderActivityTable(list) {
+  const body = document.getElementById("activityTableBody");
+  const count = document.getElementById("activityCountLabel");
+  if (!body) return;
+
+  count.textContent = (list.length || 0) + " kegiatan";
+  body.innerHTML = "";
+
+  if (!list.length) {
+    body.innerHTML = `<tr><td colspan="7" class="empty-row">Belum ada data kegiatan.</td></tr>`;
+    return;
+  }
+
+  list.forEach(function(item) {
+    const tr = document.createElement("tr");
+    const mode = String(item.mode_pelaksanaan || "Offline");
+    const status = String(item.status || "DRAFT").toUpperCase();
+    const statusClass = "activity-status-" + status.toLowerCase();
+    const pelaksanaan = mode === "Online"
+      ? (item.platform_online || "Online")
+      : mode === "Hybrid"
+        ? "Hybrid"
+        : (item.tempat || "Offline");
+
+    tr.innerHTML = `
+      <td>${escapeHTML(item.kode || "")}</td>
+      <td><strong>${escapeHTML(item.nama || "")}</strong><br><small>${escapeHTML(item.tema_sertifikat || "")}</small></td>
+      <td>${escapeHTML(item.jenis_kegiatan || "")}</td>
+      <td>${escapeHTML(item.tanggal || "")}</td>
+      <td>${escapeHTML(pelaksanaan)}${item.jam ? `<br><small>${escapeHTML(item.jam)}${item.waktu_selesai ? " - " + escapeHTML(item.waktu_selesai) : ""}</small>` : ""}</td>
+      <td><span class="activity-status ${statusClass}">${escapeHTML(status)}</span></td>
+      <td><button class="small-action-button btn-edit-activity" type="button" onclick="editActivity('${escapeHTML(item.id || "")}')">✏️ EDIT</button></td>
+    `;
+
+    body.appendChild(tr);
+  });
+}
+
+function newActivity() {
+  clearActivityForm();
+  document.getElementById("activityFormTitle").textContent = "➕ Tambah Kegiatan";
+  document.getElementById("activityStatus").value = "DRAFT";
+  document.getElementById("activityJenis").value = "Seminar";
+  document.getElementById("activityMode").value = "Offline";
+  document.getElementById("activityPenyelenggara").value = "STK Touye Paapaa";
+  document.getElementById("activityPresensi").checked = true;
+  document.getElementById("activitySertifikat").checked = true;
+  document.getElementById("activityForm").classList.add("show");
+  updateActivityModeFields();
+  document.getElementById("activityKode").focus();
+}
+
+async function editActivity(id) {
+  const item = currentActivities.find(function(activity) {
+    return String(activity.id) === String(id);
+  });
+
+  if (!item) {
+    alert("Data kegiatan tidak ditemukan.");
+    return;
+  }
+
+  fillActivityForm(item);
+  document.getElementById("activityFormTitle").textContent = "✏️ Edit Kegiatan: " + (item.nama || item.id);
+  document.getElementById("activityForm").classList.add("show");
+  updateActivityModeFields();
+  document.getElementById("activityKode").focus();
+}
+
+function fillActivityForm(item) {
+  document.getElementById("activityId").value = item.id || "";
+  document.getElementById("activityKode").value = item.kode || "";
+  document.getElementById("activityNama").value = item.nama || "";
+  document.getElementById("activityJenis").value = item.jenis_kegiatan || "Seminar";
+  document.getElementById("activityTema").value = item.tema_sertifikat || "";
+  document.getElementById("activityTanggal").value = item.tanggal_input || "";
+  document.getElementById("activityStatus").value = item.status || "DRAFT";
+  document.getElementById("activityJamMulai").value = timeForInput(item.jam);
+  document.getElementById("activityJamSelesai").value = timeForInput(item.waktu_selesai);
+  document.getElementById("activityMode").value = item.mode_pelaksanaan || "Offline";
+  document.getElementById("activityTempat").value = item.tempat || "";
+  document.getElementById("activityAlamat").value = item.alamat || "";
+  document.getElementById("activityPlatform").value = item.platform_online || "Zoom";
+  document.getElementById("activityLink").value = item.link_meeting || "";
+  document.getElementById("activityMeetingId").value = item.meeting_id || "";
+  document.getElementById("activityPasscode").value = item.passcode || "";
+  document.getElementById("activityDeskripsi").value = item.deskripsi || "";
+  document.getElementById("activityNarasumber").value = item.narasumber || "";
+  document.getElementById("activityModerator").value = item.moderator || "";
+  document.getElementById("activityPenyelenggara").value = item.penyelenggara || "STK Touye Paapaa";
+  document.getElementById("activityKontak").value = item.kontak_panitia || "";
+  document.getElementById("activityBatas").value = item.batas_peserta || "";
+  document.getElementById("activityRegMulai").value = dateTimeForInput(item.pendaftaran_mulai);
+  document.getElementById("activityRegSelesai").value = dateTimeForInput(item.pendaftaran_selesai);
+  document.getElementById("activityMateri").value = item.link_materi || "";
+  document.getElementById("activityDokumentasi").value = item.link_dokumentasi || "";
+  document.getElementById("activityCatatan").value = item.catatan || "";
+  document.getElementById("activityPresensi").checked = item.presensi_aktif !== false;
+  document.getElementById("activitySertifikat").checked = item.sertifikat_aktif !== false;
+}
+
+function timeForInput(value) {
+  const text = String(value || "").trim();
+  const match = text.match(/(\d{1,2})[\.:](\d{2})/);
+  if (!match) return "";
+  return String(match[1]).padStart(2, "0") + ":" + match[2];
+}
+
+function dateTimeForInput(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(text)) return text;
+  return "";
+}
+
+function updateActivityModeFields() {
+  const mode = document.getElementById("activityMode").value;
+  const online = document.getElementById("onlineFields");
+  online.classList.toggle("show", mode === "Online" || mode === "Hybrid");
+}
+
+function clearActivityForm() {
+  document.querySelectorAll("#activityForm input, #activityForm textarea").forEach(function(el) {
+    if (el.type === "checkbox") return;
+    if (el.id === "activityPenyelenggara") return;
+    el.value = "";
+  });
+  document.getElementById("activityId").value = "";
+  document.getElementById("activityMessage").textContent = "";
+}
+
+function cancelActivityForm() {
+  document.getElementById("activityForm").classList.remove("show");
+  document.getElementById("activityMessage").textContent = "";
+}
+
+async function saveActivity() {
+  const token = localStorage.getItem("stk_admin_token");
+  const message = document.getElementById("activityMessage");
+  const saveButton = document.querySelector("#activityForm .btn-refresh");
+
+  if (!token) {
+    alert("Sesi Admin tidak ditemukan. Silakan login kembali.");
+    return;
+  }
+
+  const kode = document.getElementById("activityKode").value.trim();
+  const nama = document.getElementById("activityNama").value.trim();
+  const tanggal = document.getElementById("activityTanggal").value;
+
+  if (!kode || !nama || !tanggal) {
+    message.style.color = "#b00020";
+    message.textContent = "Kode kegiatan, nama kegiatan, dan tanggal wajib diisi.";
+    return;
+  }
+
+  saveButton.disabled = true;
+  saveButton.textContent = "⏳ MENYIMPAN...";
+  message.textContent = "";
+
+  try {
+    const result = await apiRequest({
+      action: "admin_simpan_kegiatan",
+      token: token,
+      id: document.getElementById("activityId").value,
+      kode: kode,
+      nama: nama,
+      jenis_kegiatan: document.getElementById("activityJenis").value,
+      tema_sertifikat: document.getElementById("activityTema").value.trim(),
+      tanggal: tanggal,
+      jam_mulai: document.getElementById("activityJamMulai").value,
+      waktu_selesai: document.getElementById("activityJamSelesai").value,
+      tempat: document.getElementById("activityTempat").value.trim(),
+      alamat: document.getElementById("activityAlamat").value.trim(),
+      mode_pelaksanaan: document.getElementById("activityMode").value,
+      platform_online: document.getElementById("activityPlatform").value,
+      link_meeting: document.getElementById("activityLink").value.trim(),
+      meeting_id: document.getElementById("activityMeetingId").value.trim(),
+      passcode: document.getElementById("activityPasscode").value.trim(),
+      deskripsi: document.getElementById("activityDeskripsi").value.trim(),
+      narasumber: document.getElementById("activityNarasumber").value.trim(),
+      moderator: document.getElementById("activityModerator").value.trim(),
+      penyelenggara: document.getElementById("activityPenyelenggara").value.trim(),
+      kontak_panitia: document.getElementById("activityKontak").value.trim(),
+      batas_peserta: document.getElementById("activityBatas").value,
+      pendaftaran_mulai: document.getElementById("activityRegMulai").value,
+      pendaftaran_selesai: document.getElementById("activityRegSelesai").value,
+      link_materi: document.getElementById("activityMateri").value.trim(),
+      link_dokumentasi: document.getElementById("activityDokumentasi").value.trim(),
+      catatan: document.getElementById("activityCatatan").value.trim(),
+      status: document.getElementById("activityStatus").value,
+      presensi_aktif: document.getElementById("activityPresensi").checked,
+      sertifikat_aktif: document.getElementById("activitySertifikat").checked
+    });
+
+    if (!result.success) {
+      throw new Error(result.message || "Kegiatan gagal disimpan.");
+    }
+
+    message.style.color = "#087c35";
+    message.textContent = result.message || "Kegiatan berhasil disimpan.";
+    await loadActivities();
+
+    setTimeout(function() {
+      document.getElementById("activityForm").classList.remove("show");
+      message.textContent = "";
+    }, 700);
+  } catch (error) {
+    message.style.color = "#b00020";
+    message.textContent = "Gagal menyimpan: " + error.message;
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = "💾 SIMPAN KEGIATAN";
+  }
+}
 
 /* ======================================================
    DOWNLOAD CSV
@@ -2239,6 +2885,7 @@ document.addEventListener(
       showDashboard();
 
       loadDashboard();
+      loadActivities();
 
     }
 
