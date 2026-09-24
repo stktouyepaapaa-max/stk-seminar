@@ -212,6 +212,77 @@
       display: none !important;
     }
 
+
+    .top-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 4px 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      width: auto;
+      margin: 0;
+      padding: 9px 14px;
+      border: 1px solid #0d5bd7;
+      border-radius: 999px;
+      background: #fff;
+      color: #0d5bd7;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: #eef6ff;
+    }
+
+    .certificate-card {
+      background: #f8fbff;
+      border: 1px solid #dbe8f7;
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+
+    .certificate-number {
+      font-size: 19px;
+      font-weight: bold;
+      color: #0d5bd7;
+      margin: 10px 0;
+      word-break: break-word;
+    }
+
+    .download-button {
+      background: #159447;
+    }
+
+    .download-button:hover {
+      background: #107a39;
+    }
+
+    .security-note {
+      background: #fff8e8;
+      border-left: 4px solid #d89b00;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-top: 15px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .certificate-success {
+      background: #e9f8ef;
+      color: #147a3e;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+
     footer {
       text-align: center;
       color: #777;
@@ -247,6 +318,11 @@
   <div class="header">
     <h1>STK TOUYE PAPAA</h1>
     <p>Pendaftaran & Presensi Seminar</p>
+  </div>
+
+  <div class="top-nav">
+    <button class="nav-link" onclick="showPage('homePage')">Beranda</button>
+    <button class="nav-link" onclick="showPage('certificatePage')">🎓 Sertifikat Peserta</button>
   </div>
 
 
@@ -470,6 +546,80 @@
 
 
   <!-- ========================= -->
+  <!-- HALAMAN CEK SERTIFIKAT -->
+  <!-- ========================= -->
+
+  <section id="certificatePage" class="hidden">
+
+    <div class="card">
+
+      <h2 class="page-title">
+        🎓 Cek Sertifikat Peserta
+      </h2>
+
+      <p>
+        Halaman ini khusus untuk peserta yang telah terdaftar
+        dan hadir dalam kegiatan.
+      </p>
+
+      <div class="security-note">
+        <strong>Verifikasi keamanan:</strong><br>
+        Masukkan <strong>Nomor Peserta</strong> dan
+        <strong>Email yang digunakan saat pendaftaran</strong>.
+        Sertifikat hanya dapat diakses apabila data peserta cocok,
+        presensi berstatus <strong>HADIR</strong>, dan sertifikat
+        berstatus <strong>TERBIT</strong>.
+      </div>
+
+      <label>
+        Nomor Peserta <span class="required">*</span>
+      </label>
+
+      <input
+        type="text"
+        id="certificateNoPeserta"
+        placeholder="Contoh: STK-2026-0002">
+
+      <label>
+        Email Pendaftaran <span class="required">*</span>
+      </label>
+
+      <input
+        type="email"
+        id="certificateEmail"
+        placeholder="Email yang digunakan saat mendaftar">
+
+      <button onclick="cekSertifikatPeserta()">
+        CEK SERTIFIKAT
+      </button>
+
+      <div id="certificateMessage"></div>
+
+      <div
+        id="certificateInfo"
+        class="certificate-card hidden">
+      </div>
+
+      <button
+        id="downloadCertificateButton"
+        class="download-button hidden"
+        onclick="downloadSertifikatPeserta()">
+        ⬇ DOWNLOAD SERTIFIKAT
+      </button>
+
+      <button
+        class="back-button"
+        onclick="showPage('homePage')">
+        ← KEMBALI
+      </button>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ========================= -->
   <!-- HALAMAN PENDAFTARAN BERHASIL -->
   <!-- ========================= -->
 
@@ -551,6 +701,7 @@
       "homePage",
       "registrationPage",
       "attendancePage",
+      "certificatePage",
       "registrationSuccess"
     ];
 
@@ -818,6 +969,225 @@
 
     }
 
+  }
+
+
+
+  /* ========================= */
+  /* CEK SERTIFIKAT PESERTA */
+  /* ========================= */
+
+  async function cekSertifikatPeserta() {
+
+    const noPeserta =
+      document.getElementById("certificateNoPeserta").value.trim();
+
+    const email =
+      document.getElementById("certificateEmail").value.trim();
+
+    const message =
+      document.getElementById("certificateMessage");
+
+    const info =
+      document.getElementById("certificateInfo");
+
+    const downloadButton =
+      document.getElementById("downloadCertificateButton");
+
+    info.classList.add("hidden");
+    downloadButton.classList.add("hidden");
+    window.currentCertificate = null;
+
+    if (!noPeserta || !email) {
+      message.innerHTML =
+        '<div class="error">Nomor peserta dan email wajib diisi.</div>';
+      return;
+    }
+
+    message.innerHTML =
+      '<div class="loading">⏳ Memverifikasi data sertifikat...</div>';
+
+    try {
+
+      const response = await fetch(API_URL, {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify({
+          action: "cek_sertifikat",
+          no_peserta: noPeserta,
+          email: email
+        })
+
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.sertifikat) {
+
+        const sertifikat = result.sertifikat;
+
+        message.innerHTML = "";
+
+        info.innerHTML =
+          "<strong>✓ Sertifikat ditemukan</strong><br><br>" +
+          "<strong>Nama:</strong> " +
+          (sertifikat.nama || "-") +
+          "<br>" +
+          "<strong>Kegiatan:</strong> " +
+          (sertifikat.kegiatan || "-") +
+          "<br>" +
+          "<strong>Tanggal:</strong> " +
+          (sertifikat.tanggal || "-") +
+          "<br>" +
+          "<strong>Nomor Sertifikat:</strong>" +
+          '<div class="certificate-number">' +
+          (sertifikat.no_sertifikat || "-") +
+          "</div>" +
+          "<strong>Status:</strong> " +
+          (sertifikat.status || "-");
+
+        info.classList.remove("hidden");
+
+        window.currentCertificate = {
+          no_peserta: sertifikat.no_peserta,
+          email: email,
+          kegiatan_id: sertifikat.kegiatan_id,
+          no_sertifikat: sertifikat.no_sertifikat
+        };
+
+        downloadButton.classList.remove("hidden");
+
+      } else {
+
+        message.innerHTML =
+          '<div class="error">' +
+          (result.message || "Sertifikat tidak tersedia.") +
+          "</div>";
+
+      }
+
+    } catch (error) {
+
+      message.innerHTML =
+        '<div class="error">' +
+        "Terjadi kesalahan koneksi. Silakan coba lagi." +
+        "</div>";
+
+      console.error(error);
+    }
+  }
+
+
+  /* ========================= */
+  /* DOWNLOAD SERTIFIKAT */
+  /* ========================= */
+
+  async function downloadSertifikatPeserta() {
+
+    const cert = window.currentCertificate;
+
+    if (!cert) {
+      return;
+    }
+
+    const message =
+      document.getElementById("certificateMessage");
+
+    const downloadButton =
+      document.getElementById("downloadCertificateButton");
+
+    downloadButton.disabled = true;
+    downloadButton.textContent = "⏳ Menyiapkan sertifikat...";
+
+    message.innerHTML =
+      '<div class="loading">⏳ Menyiapkan file PDF...</div>';
+
+    try {
+
+      const response = await fetch(API_URL, {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify({
+          action: "unduh_sertifikat",
+          no_peserta: cert.no_peserta,
+          email: cert.email,
+          kegiatan_id: cert.kegiatan_id
+        })
+
+      });
+
+      const result = await response.json();
+
+      if (!result.success || !result.pdf_base64) {
+
+        message.innerHTML =
+          '<div class="error">' +
+          (result.message || "Sertifikat tidak dapat diunduh.") +
+          "</div>";
+
+        return;
+      }
+
+      const binaryString =
+        atob(result.pdf_base64);
+
+      const bytes =
+        new Uint8Array(binaryString.length);
+
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      const blob =
+        new Blob([bytes], { type: "application/pdf" });
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+      link.download =
+        result.file_name || "Sertifikat-STK-Touye-Paapaa.pdf";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(function() {
+        URL.revokeObjectURL(url);
+      }, 1000);
+
+      message.innerHTML =
+        '<div class="certificate-success">' +
+        "✓ Sertifikat berhasil disiapkan untuk diunduh." +
+        "</div>";
+
+    } catch (error) {
+
+      message.innerHTML =
+        '<div class="error">' +
+        "Terjadi kesalahan saat menyiapkan sertifikat." +
+        "</div>";
+
+      console.error(error);
+
+    } finally {
+
+      downloadButton.disabled = false;
+      downloadButton.textContent = "⬇ DOWNLOAD SERTIFIKAT";
+    }
   }
 
 
