@@ -2100,6 +2100,119 @@ function renderActivityTable(list) {
   });
 }
 
+function getActivityFormData() {
+  return {
+    id: document.getElementById("activityId").value || "",
+    kode: document.getElementById("activityKode").value || "",
+    nama: document.getElementById("activityNama").value || "",
+    jenis_kegiatan: document.getElementById("activityJenis").value || "Seminar",
+    tema_sertifikat: document.getElementById("activityTema").value || "",
+    tanggal: document.getElementById("activityTanggal").value || "",
+    status: document.getElementById("activityStatus").value || "DRAFT",
+    jam_mulai: document.getElementById("activityJamMulai").value || "",
+    waktu_selesai: document.getElementById("activityJamSelesai").value || "",
+    mode_pelaksanaan: document.getElementById("activityMode").value || "Offline",
+    tempat: document.getElementById("activityTempat").value || "",
+    alamat: document.getElementById("activityAlamat").value || "",
+    platform_online: document.getElementById("activityPlatform").value || "Zoom",
+    link_meeting: document.getElementById("activityLink").value || "",
+    meeting_id: document.getElementById("activityMeetingId").value || "",
+    passcode: document.getElementById("activityPasscode").value || "",
+    deskripsi: document.getElementById("activityDeskripsi").value || "",
+    narasumber: document.getElementById("activityNarasumber").value || "",
+    moderator: document.getElementById("activityModerator").value || "",
+    penyelenggara: document.getElementById("activityPenyelenggara").value || "STK Touye Paapaa",
+    kontak_panitia: document.getElementById("activityKontak").value || "",
+    batas_peserta: document.getElementById("activityBatas").value || "",
+    pendaftaran_mulai: document.getElementById("activityRegMulai").value || "",
+    pendaftaran_selesai: document.getElementById("activityRegSelesai").value || "",
+    link_materi: document.getElementById("activityMateri").value || "",
+    link_dokumentasi: document.getElementById("activityDokumentasi").value || "",
+    catatan: document.getElementById("activityCatatan").value || "",
+    presensi_aktif: document.getElementById("activityPresensi").checked,
+    sertifikat_aktif: document.getElementById("activitySertifikat").checked
+  };
+}
+
+const ACTIVITY_DRAFT_KEY = "stk_activity_draft_v1";
+let activityDraftTimer = null;
+
+function saveActivityDraft() {
+  const form = document.getElementById("activityForm");
+  if (!form || !form.classList.contains("show")) return;
+
+  try {
+    const data = getActivityFormData();
+    const hasContent = Object.keys(data).some(function(key) {
+      if (key === "presensi_aktif" || key === "sertifikat_aktif") return false;
+      return String(data[key] || "").trim() !== "";
+    });
+
+    if (!hasContent) {
+      localStorage.removeItem(ACTIVITY_DRAFT_KEY);
+      return;
+    }
+
+    localStorage.setItem(ACTIVITY_DRAFT_KEY, JSON.stringify({
+      saved_at: new Date().toISOString(),
+      data: data
+    }));
+
+    const message = document.getElementById("activityMessage");
+    if (message && !message.textContent) {
+      message.style.color = "#6b7280";
+      message.textContent = "✓ Draft tersimpan otomatis di browser.";
+    }
+  } catch (error) {
+    console.warn("Draft kegiatan tidak dapat disimpan:", error);
+  }
+}
+
+function scheduleActivityDraftSave() {
+  clearTimeout(activityDraftTimer);
+  activityDraftTimer = setTimeout(saveActivityDraft, 400);
+}
+
+function clearActivityDraft() {
+  localStorage.removeItem(ACTIVITY_DRAFT_KEY);
+}
+
+function restoreActivityDraft() {
+  const form = document.getElementById("activityForm");
+  if (!form) return false;
+
+  try {
+    const raw = localStorage.getItem(ACTIVITY_DRAFT_KEY);
+    if (!raw) return false;
+
+    const saved = JSON.parse(raw);
+    const item = saved && saved.data ? saved.data : null;
+    if (!item) return false;
+
+    fillActivityForm(item);
+    document.getElementById("activityId").value = "";
+    document.getElementById("activityFormTitle").textContent = "📝 Lanjutkan Draft Kegiatan";
+    document.getElementById("activityForm").classList.add("show");
+    updateActivityModeFields();
+
+    const message = document.getElementById("activityMessage");
+    if (message) {
+      message.style.color = "#6b7280";
+      const savedDate = saved.saved_at ? new Date(saved.saved_at) : null;
+      const label = savedDate && !isNaN(savedDate.getTime())
+        ? savedDate.toLocaleString("id-ID")
+        : "sebelumnya";
+      message.textContent = "✓ Draft dipulihkan otomatis (tersimpan " + label + ").";
+    }
+
+    return true;
+  } catch (error) {
+    console.warn("Draft kegiatan tidak dapat dipulihkan:", error);
+    clearActivityDraft();
+    return false;
+  }
+}
+
 function newActivity() {
   clearActivityForm();
   document.getElementById("activityFormTitle").textContent = "➕ Tambah Kegiatan";
@@ -2111,6 +2224,7 @@ function newActivity() {
   document.getElementById("activitySertifikat").checked = true;
   document.getElementById("activityForm").classList.add("show");
   updateActivityModeFields();
+  scheduleActivityDraftSave();
   document.getElementById("activityKode").focus();
 }
 
@@ -2124,6 +2238,7 @@ async function editActivity(id) {
     return;
   }
 
+  clearActivityDraft();
   fillActivityForm(item);
   document.getElementById("activityFormTitle").textContent = "✏️ Edit Kegiatan: " + (item.nama || item.id);
   document.getElementById("activityForm").classList.add("show");
@@ -2137,7 +2252,7 @@ function fillActivityForm(item) {
   document.getElementById("activityNama").value = item.nama || "";
   document.getElementById("activityJenis").value = item.jenis_kegiatan || "Seminar";
   document.getElementById("activityTema").value = item.tema_sertifikat || "";
-  document.getElementById("activityTanggal").value = item.tanggal_input || "";
+  document.getElementById("activityTanggal").value = item.tanggal_input || item.tanggal || "";
   document.getElementById("activityStatus").value = item.status || "DRAFT";
   document.getElementById("activityJamMulai").value = timeForInput(item.jam);
   document.getElementById("activityJamSelesai").value = timeForInput(item.waktu_selesai);
@@ -2203,8 +2318,11 @@ async function saveActivity() {
   const message = document.getElementById("activityMessage");
   const saveButton = document.querySelector("#activityForm .btn-refresh");
 
+  saveActivityDraft();
+
   if (!token) {
-    alert("Sesi Admin tidak ditemukan. Silakan login kembali.");
+    message.style.color = "#b00020";
+    message.textContent = "Sesi Admin tidak ditemukan. Draft tetap tersimpan. Silakan login kembali.";
     return;
   }
 
@@ -2214,7 +2332,7 @@ async function saveActivity() {
 
   if (!kode || !nama || !tanggal) {
     message.style.color = "#b00020";
-    message.textContent = "Kode kegiatan, nama kegiatan, dan tanggal wajib diisi.";
+    message.textContent = "Kode kegiatan, nama kegiatan, dan tanggal wajib diisi. Draft tetap tersimpan.";
     return;
   }
 
@@ -2261,6 +2379,7 @@ async function saveActivity() {
       throw new Error(result.message || "Kegiatan gagal disimpan.");
     }
 
+    clearActivityDraft();
     message.style.color = "#087c35";
     message.textContent = result.message || "Kegiatan berhasil disimpan.";
     await loadActivities();
@@ -2270,13 +2389,15 @@ async function saveActivity() {
       message.textContent = "";
     }, 700);
   } catch (error) {
+    saveActivityDraft();
     message.style.color = "#b00020";
-    message.textContent = "Gagal menyimpan: " + error.message;
+    message.textContent = "Gagal menyimpan: " + error.message + " Draft tetap tersimpan otomatis.";
   } finally {
     saveButton.disabled = false;
     saveButton.textContent = "💾 SIMPAN KEGIATAN";
   }
 }
+
 
 /* ======================================================
    DOWNLOAD CSV
@@ -2842,6 +2963,23 @@ function escapeHTML(
 
 
 /* ======================================================
+   AUTO-SAVE DRAFT FORM KEGIATAN
+======================================================= */
+
+document.addEventListener("input", function(event) {
+  if (event.target && event.target.closest && event.target.closest("#activityForm")) {
+    scheduleActivityDraftSave();
+  }
+});
+
+document.addEventListener("change", function(event) {
+  if (event.target && event.target.closest && event.target.closest("#activityForm")) {
+    scheduleActivityDraftSave();
+  }
+});
+
+
+/* ======================================================
    ENTER UNTUK LOGIN
 ======================================================= */
 
@@ -2886,6 +3024,7 @@ document.addEventListener(
 
       loadDashboard();
       loadActivities();
+      restoreActivityDraft();
 
     }
 
