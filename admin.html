@@ -317,6 +317,47 @@ input {
   color: #9a5a00;
 }
 
+/* Pembayaran peserta */
+.payment-status {
+  display: inline-block;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: #fff0c8;
+  color: #8a5600;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.payment-free {
+  background: #e8f7ee;
+  color: #138a45;
+}
+.payment-amount {
+  margin-top: 4px;
+  color: #555;
+  font-size: 11px;
+}
+.proof-link {
+  display: inline-block;
+  color: #1764d9;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.proof-link:hover {
+  text-decoration: underline;
+}
+.proof-file {
+  margin-top: 4px;
+  color: #666;
+  font-size: 10px;
+  word-break: break-word;
+}
+.proof-none {
+  color: #888;
+  font-size: 11px;
+}
+
 .cert-action {
   display: inline-flex;
   align-items: center;
@@ -1332,6 +1373,14 @@ input {
               </th>
 
               <th>
+                Pembayaran
+              </th>
+
+              <th>
+                Bukti
+              </th>
+
+              <th>
                 Sertifikat
               </th>
 
@@ -1347,7 +1396,7 @@ input {
             <tr>
 
               <td
-                colspan="7"
+                colspan="10"
                 class="empty-row"
               >
                 Belum ada data.
@@ -1362,7 +1411,7 @@ input {
       </div>
 
       <div style="margin-top:14px; color:#666; font-size:13px;">
-        📜 Peserta berstatus <strong>HADIR</strong> dapat diterbitkan sertifikatnya dari kolom <strong>Sertifikat</strong>.
+        💳 Kolom <strong>Pembayaran</strong> menampilkan status dan nominal. Kolom <strong>Bukti</strong> digunakan untuk melihat bukti transfer yang dikirim peserta. Pemeriksaan penerimaan dana tetap dilakukan secara manual.
       </div>
 
     </div>
@@ -2004,7 +2053,7 @@ function renderParticipantTable(
   if (!participants || participants.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="8" class="empty-row">Belum ada peserta.</td>
+        <td colspan="10" class="empty-row">Belum ada peserta.</td>
       </tr>
     `;
     return;
@@ -2024,11 +2073,109 @@ function renderParticipantTable(
     const noPeserta = String(participant.no_peserta || "").trim();
     const kegiatanId = String(participant.kegiatan_id || "").trim();
 
+    /* =========================
+       PEMBAYARAN
+    ========================== */
+
+    const paymentStatus = String(
+      participant.status_pembayaran || ""
+    ).trim();
+
+    const paymentAmount = Number(
+      participant.biaya_pembayaran || 0
+    );
+
+    let paymentHTML = "";
+
+    if (!paymentStatus) {
+
+      paymentHTML = `
+        <span class="proof-none">BELUM ADA DATA</span>
+      `;
+
+    } else {
+
+      const upperPayment = paymentStatus.toUpperCase();
+      const isFree =
+        upperPayment === "GRATIS" ||
+        paymentAmount === 0;
+
+      const paymentClass = isFree
+        ? "payment-status payment-free"
+        : "payment-status";
+
+      const amountHTML = paymentAmount > 0
+        ? `<div class="payment-amount">Rp ${formatRupiah(paymentAmount)}</div>`
+        : "";
+
+      paymentHTML = `
+        <span class="${paymentClass}">
+          ${escapeHTML(paymentStatus)}
+        </span>
+        ${amountHTML}
+      `;
+    }
+
+    /* =========================
+       BUKTI PEMBAYARAN
+    ========================== */
+
+    const proofURL = String(
+      participant.bukti_pembayaran_url || ""
+    ).trim();
+
+    const proofFile = String(
+      participant.nama_file_bukti || ""
+    ).trim();
+
+    let proofHTML = "";
+
+    if (proofURL) {
+
+      proofHTML = `
+        <a
+          class="proof-link"
+          href="${escapeHTML(proofURL)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          📄 LIHAT BUKTI
+        </a>
+        ${proofFile
+          ? `<div class="proof-file">${escapeHTML(proofFile)}</div>`
+          : ""}
+      `;
+
+    } else if (
+      paymentStatus.toUpperCase() === "GRATIS" ||
+      paymentAmount === 0
+    ) {
+
+      proofHTML = `
+        <span class="proof-none">TIDAK DIPERLUKAN</span>
+      `;
+
+    } else {
+
+      proofHTML = `
+        <span class="proof-none">BELUM ADA</span>
+      `;
+
+    }
+
+    /* =========================
+       SERTIFIKAT
+    ========================== */
+
     let certificateHTML = "";
 
     if (!isHadir) {
-      certificateHTML = `<span class="status-belum">BELUM HADIR</span>`;
+
+      certificateHTML =
+        `<span class="status-belum">BELUM HADIR</span>`;
+
     } else {
+
       certificateHTML = `
         <button
           class="cert-action"
@@ -2037,6 +2184,7 @@ function renderParticipantTable(
         >📜 TERBITKAN</button>
         <div id="cert-${encodeURIComponent(noPeserta)}"></div>
       `;
+
     }
 
     tr.innerHTML = `
@@ -2047,6 +2195,8 @@ function renderParticipantTable(
       <td>${statusHTML}</td>
       <td>${escapeHTML(participant.tanggal_presensi || "-")}</td>
       <td>${escapeHTML(participant.jam_presensi || "-")}</td>
+      <td>${paymentHTML}</td>
+      <td>${proofHTML}</td>
       <td>${certificateHTML}</td>
     `;
 
@@ -3055,6 +3205,14 @@ function goHome() {
 /* ======================================================
    ESCAPE HTML
 ======================================================= */
+
+function formatRupiah(value) {
+
+  const number = Number(value || 0);
+
+  return number.toLocaleString("id-ID");
+}
+
 
 function escapeHTML(
   value
