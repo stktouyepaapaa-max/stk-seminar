@@ -1117,6 +1117,54 @@ input {
           </div>
 
           <div class="activity-field full">
+            <label>💰 Biaya &amp; Pembayaran</label>
+            <div class="form-grid">
+              <div class="activity-field">
+                <label for="activityBiayaStatus">Status Biaya</label>
+                <select id="activityBiayaStatus" onchange="updatePaymentFields()">
+                  <option value="GRATIS">Gratis</option>
+                  <option value="BERBAYAR">Berbayar</option>
+                </select>
+              </div>
+
+              <div class="activity-field">
+                <label for="activityBiaya">Biaya Pendaftaran (Rp)</label>
+                <input
+                  id="activityBiaya"
+                  type="number"
+                  min="0"
+                  step="1000"
+                  value="0"
+                  placeholder="Contoh: 150000"
+                >
+              </div>
+
+              <div id="paymentFields" class="activity-field full" style="display:none;">
+                <div class="form-grid">
+                  <div class="activity-field">
+                    <label for="activityMetodePembayaran">Metode Pembayaran</label>
+                    <select id="activityMetodePembayaran">
+                      <option value="TRANSFER_BANK">Transfer Bank</option>
+                      <option value="QRIS">QRIS</option>
+                      <option value="TUNAI">Tunai</option>
+                      <option value="LAINNYA">Lainnya</option>
+                    </select>
+                  </div>
+
+                  <div class="activity-field">
+                    <label for="activityInfoPembayaran">Informasi Pembayaran</label>
+                    <input
+                      id="activityInfoPembayaran"
+                      type="text"
+                      placeholder="Contoh: BRI 123456789 a.n. STK Touye Paapaa"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-field full">
             <label>Pengaturan</label>
             <div class="checkbox-row">
               <label class="checkbox-item"><input id="activityPresensi" type="checkbox" checked> Presensi aktif</label>
@@ -2129,6 +2177,10 @@ function getActivityFormData() {
     link_materi: document.getElementById("activityMateri").value || "",
     link_dokumentasi: document.getElementById("activityDokumentasi").value || "",
     catatan: document.getElementById("activityCatatan").value || "",
+    biaya_status: document.getElementById("activityBiayaStatus").value || "GRATIS",
+    biaya_pendaftaran: document.getElementById("activityBiaya").value || "0",
+    metode_pembayaran: document.getElementById("activityMetodePembayaran").value || "TRANSFER_BANK",
+    info_pembayaran: document.getElementById("activityInfoPembayaran").value || "",
     presensi_aktif: document.getElementById("activityPresensi").checked,
     sertifikat_aktif: document.getElementById("activitySertifikat").checked
   };
@@ -2222,6 +2274,10 @@ function newActivity() {
   document.getElementById("activityPenyelenggara").value = "STK Touye Paapaa";
   document.getElementById("activityPresensi").checked = true;
   document.getElementById("activitySertifikat").checked = true;
+  document.getElementById("activityBiayaStatus").value = "GRATIS";
+  document.getElementById("activityBiaya").value = "0";
+  document.getElementById("activityMetodePembayaran").value = "TRANSFER_BANK";
+  document.getElementById("activityInfoPembayaran").value = "";
   document.getElementById("activityForm").classList.add("show");
   updateActivityModeFields();
   scheduleActivityDraftSave();
@@ -2274,8 +2330,13 @@ function fillActivityForm(item) {
   document.getElementById("activityMateri").value = item.link_materi || "";
   document.getElementById("activityDokumentasi").value = item.link_dokumentasi || "";
   document.getElementById("activityCatatan").value = item.catatan || "";
+  document.getElementById("activityBiayaStatus").value = item.biaya_status || ((Number(item.biaya_pendaftaran || 0) > 0) ? "BERBAYAR" : "GRATIS");
+  document.getElementById("activityBiaya").value = item.biaya_pendaftaran || "0";
+  document.getElementById("activityMetodePembayaran").value = item.metode_pembayaran || "TRANSFER_BANK";
+  document.getElementById("activityInfoPembayaran").value = item.info_pembayaran || "";
   document.getElementById("activityPresensi").checked = item.presensi_aktif !== false;
   document.getElementById("activitySertifikat").checked = item.sertifikat_aktif !== false;
+  updatePaymentFields();
 }
 
 function timeForInput(value) {
@@ -2296,6 +2357,23 @@ function updateActivityModeFields() {
   const mode = document.getElementById("activityMode").value;
   const online = document.getElementById("onlineFields");
   online.classList.toggle("show", mode === "Online" || mode === "Hybrid");
+}
+
+function updatePaymentFields() {
+  const status = document.getElementById("activityBiayaStatus").value;
+  const biaya = document.getElementById("activityBiaya");
+  const paymentFields = document.getElementById("paymentFields");
+
+  if (status === "BERBAYAR") {
+    paymentFields.style.display = "block";
+    if (!biaya.value || Number(biaya.value) === 0) {
+      biaya.value = "";
+    }
+  } else {
+    paymentFields.style.display = "none";
+    biaya.value = "0";
+    document.getElementById("activityInfoPembayaran").value = "";
+  }
 }
 
 function clearActivityForm() {
@@ -2370,6 +2448,10 @@ async function saveActivity() {
       link_materi: document.getElementById("activityMateri").value.trim(),
       link_dokumentasi: document.getElementById("activityDokumentasi").value.trim(),
       catatan: document.getElementById("activityCatatan").value.trim(),
+      biaya_status: document.getElementById("activityBiayaStatus").value,
+      biaya_pendaftaran: document.getElementById("activityBiaya").value || "0",
+      metode_pembayaran: document.getElementById("activityMetodePembayaran").value,
+      info_pembayaran: document.getElementById("activityInfoPembayaran").value.trim(),
       status: document.getElementById("activityStatus").value,
       presensi_aktif: document.getElementById("activityPresensi").checked,
       sertifikat_aktif: document.getElementById("activitySertifikat").checked
