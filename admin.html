@@ -317,6 +317,33 @@ input {
   color: #9a5a00;
 }
 
+.cert-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 7px;
+  background: #1764d9;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.cert-action:disabled { opacity: .65; cursor: not-allowed; }
+.cert-action.cert-issued { background: #159447; }
+.cert-link {
+  display: inline-block;
+  margin-top: 5px;
+  color: #1764d9;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.cert-link:hover { text-decoration: underline; }
+
 .empty-row {
   text-align: center;
   color: #666;
@@ -1304,6 +1331,10 @@ input {
                 Jam
               </th>
 
+              <th>
+                Sertifikat
+              </th>
+
             </tr>
 
           </thead>
@@ -1328,6 +1359,10 @@ input {
 
         </table>
 
+      </div>
+
+      <div style="margin-top:14px; color:#666; font-size:13px;">
+        📜 Peserta berstatus <strong>HADIR</strong> dapat diterbitkan sertifikatnya dari kolom <strong>Sertifikat</strong>.
       </div>
 
     </div>
@@ -1963,120 +1998,141 @@ function renderParticipantTable(
   participants
 ) {
 
-  const tbody =
-    document.getElementById(
-      "participantTableBody"
-    );
-
-
+  const tbody = document.getElementById("participantTableBody");
   tbody.innerHTML = "";
 
-
-  if (
-    !participants ||
-    participants.length === 0
-  ) {
-
+  if (!participants || participants.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td
-          colspan="7"
-          class="empty-row"
-        >
-          Belum ada peserta.
-        </td>
+        <td colspan="8" class="empty-row">Belum ada peserta.</td>
       </tr>
     `;
-
-
     return;
-
   }
 
+  participants.forEach(function(participant) {
 
-  participants.forEach(
-    function(participant) {
+    const tr = document.createElement("tr");
 
-      const tr =
-        document.createElement(
-          "tr"
-        );
+    const status = String(participant.status_presensi || "").trim();
+    const isHadir = status.toUpperCase() === "HADIR";
 
+    const statusHTML = isHadir
+      ? `<span class="status-hadir">HADIR</span>`
+      : `<span class="status-belum">BELUM HADIR</span>`;
 
-      const status =
-        String(
-          participant.status_presensi ||
-          ""
-        ).trim();
+    const noPeserta = String(participant.no_peserta || "").trim();
+    const kegiatanId = String(participant.kegiatan_id || "").trim();
 
+    let certificateHTML = "";
 
-      const isHadir =
-        status.toUpperCase() ===
-        "HADIR";
-
-
-      const statusHTML =
-        isHadir
-          ? `<span class="status-hadir">HADIR</span>`
-          : `<span class="status-belum">BELUM HADIR</span>`;
-
-
-      tr.innerHTML = `
-
-        <td>
-          ${escapeHTML(
-            participant.no_peserta ||
-            ""
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            participant.nama ||
-            ""
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            participant.instansi ||
-            ""
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            participant.jabatan ||
-            ""
-          )}
-        </td>
-
-        <td>
-          ${statusHTML}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            participant.tanggal_presensi ||
-            "-"
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            participant.jam_presensi ||
-            "-"
-          )}
-        </td>
-
+    if (!isHadir) {
+      certificateHTML = `<span class="status-belum">BELUM HADIR</span>`;
+    } else {
+      certificateHTML = `
+        <button
+          class="cert-action"
+          type="button"
+          onclick="issueCertificate(this, '${encodeURIComponent(noPeserta)}', '${encodeURIComponent(kegiatanId)}')"
+        >📜 TERBITKAN</button>
+        <div id="cert-${encodeURIComponent(noPeserta)}"></div>
       `;
-
-
-      tbody.appendChild(tr);
-
     }
-  );
 
+    tr.innerHTML = `
+      <td>${escapeHTML(participant.no_peserta || "")}</td>
+      <td>${escapeHTML(participant.nama || "")}</td>
+      <td>${escapeHTML(participant.instansi || "")}</td>
+      <td>${escapeHTML(participant.jabatan || "")}</td>
+      <td>${statusHTML}</td>
+      <td>${escapeHTML(participant.tanggal_presensi || "-")}</td>
+      <td>${escapeHTML(participant.jam_presensi || "-")}</td>
+      <td>${certificateHTML}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+
+/* ======================================================
+   TERBITKAN SERTIFIKAT
+====================================================== */
+
+async function issueCertificate(button, encodedNoPeserta, encodedKegiatanId) {
+
+  const token = localStorage.getItem("stk_admin_token");
+
+  if (!token) {
+    alert("Sesi Admin tidak ditemukan. Silakan login kembali.");
+    return;
+  }
+
+  const noPeserta = decodeURIComponent(encodedNoPeserta || "");
+  const kegiatanId = decodeURIComponent(encodedKegiatanId || "");
+
+  if (!noPeserta) {
+    alert("Nomor peserta tidak ditemukan.");
+    return;
+  }
+
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "⏳ MEMPROSES...";
+
+  try {
+
+    const result = await apiRequest({
+      action: "terbitkan_sertifikat",
+      token: token,
+      no_peserta: noPeserta,
+      kegiatan_id: kegiatanId
+    });
+
+    if (!result.success) {
+      throw new Error(result.message || "Sertifikat gagal diterbitkan.");
+    }
+
+    const sertifikat = result.sertifikat || {};
+
+    button.classList.add("cert-issued");
+    button.textContent = "✓ SUDAH TERBIT";
+
+    const holder = document.getElementById(
+      "cert-" + encodeURIComponent(noPeserta)
+    );
+
+    if (holder) {
+
+      holder.innerHTML = "";
+
+      if (sertifikat.file_url) {
+
+        const link = document.createElement("a");
+        link.className = "cert-link";
+        link.href = sertifikat.file_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "📄 BUKA / DOWNLOAD PDF";
+
+        holder.appendChild(link);
+
+      } else {
+
+        holder.textContent = "PDF belum tersedia.";
+
+      }
+    }
+
+    alert(result.message || "Sertifikat berhasil diterbitkan.");
+
+  } catch (error) {
+
+    button.disabled = false;
+    button.textContent = originalText;
+
+    alert("Gagal menerbitkan sertifikat: " + error.message);
+  }
 }
 
 
